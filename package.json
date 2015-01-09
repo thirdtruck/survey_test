@@ -1,0 +1,20 @@
+{
+  "name": "okdork_test",
+  "version": "0.0.1-a",
+  "description": "Code exercise from the awesome folks at OkDork!",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.10.7",
+    "sequelize": "^2.0.0",
+    "sequelize-mysql": "^1.7.0",
+    "mocha": "^2.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha test/index.js"
+  },
+  "keywords": [
+    "okdork"
+  ],
+  "author": "James C. Holder"
+}
