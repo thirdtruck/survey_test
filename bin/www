@@ -47,16 +47,25 @@ models.sequelize.sync({ force: true })
  * Initialize sample questions.
  */
 function createExampleQuestion() {
-  var exampleQuestion = models.Question
-    .create({
-      title: 'Example Question',
-    })
+  models.Question
+    .find({ where: { title: 'Example Question' }})
     .complete(function(err, question) {
       if (!!err) {
-        console.log("Unable to create example question: ", err);
-      } else {
-        console.log("Created example question.");
-        createExampleAnswer(question);
+        console.log("Error while searching for existing example question: ", err);
+      } else if (!question) {
+        console.log("Found no existing example question.");
+        models.Question
+          .create({
+            title: 'Example Question',
+          })
+          .complete(function(err, question) {
+            if (!!err) {
+              console.log("Unable to create example question: ", err);
+            } else {
+              console.log("Created example question.");
+              createExampleAnswer(question);
+            }
+          });
       }
     });
 }
