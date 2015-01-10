@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Answer.belongsTo(models.Question);
       }
-    }
+    },
+    timestamps: false
   });
   return Answer;
 };

@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Question.hasMany(models.Answer);
       }
-    }
+    },
+    timestamps: false
   });
   return Question;
 };

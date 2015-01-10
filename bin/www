@@ -38,7 +38,48 @@ function setupServer() {
 /**
  * Initialize ORM.
  */
-models.sequelize.sync().then(setupServer);
+/* TODO: Replace with migration-based setup! */
+models.sequelize.sync({ force: true })
+  .then(createExampleQuestion)
+  .then(setupServer);
+
+/**
+ * Initialize sample questions.
+ */
+function createExampleQuestion() {
+  var exampleQuestion = models.Question
+    .create({
+      title: 'Example Question',
+    })
+    .complete(function(err, question) {
+      if (!!err) {
+        console.log("Unable to create example question: ", err);
+      } else {
+        console.log("Created example question.");
+        createExampleAnswer(question);
+      }
+    });
+}
+
+function createExampleAnswer(question) {
+  models.Answer
+    .create({
+      title: "An example answer"
+    })
+    .complete(function(err, answer) {
+      if (!!err) {
+        console.log("Unable to create example answer: ", err);
+      } else {
+        question.addAnswer(answer).complete(function(err) {
+          if (!!err) {
+            console.log("Unable to save example answer to question: ", err);
+          } else {
+            console.log("Created example answer.");
+          }
+        });
+      }
+    });
+}
 
 /**
  * Event listener for HTTP server "error" event.
