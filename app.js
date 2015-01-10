@@ -22,8 +22,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+var models = require('./models');
+var questionsRoutes = require('./routes/questions');
+
+/* Make the ORM accessible to our router. */
+app.use(function(req, res, next) {
+  req.models = models;
+  next();
+});
+
 app.use('/', routes);
 app.use('/users', users);
+app.use('/questions', questionsRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

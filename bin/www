@@ -24,6 +24,7 @@ app.set('port', port);
 var server;
 
 function setupServer() {
+  
   server = http.createServer(app);
 
   /**
