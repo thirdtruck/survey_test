@@ -20,7 +20,7 @@ router.get('/:id', function(req, res) {
   var models = req.models;
 
   models.Question
-    .find({ id: req.params.id })
+    .find({ where: { id: req.params.id }})
     .complete(function(err, question) {
       if (!!err) {
         console.log("Unable to fetch a question: ", err);
