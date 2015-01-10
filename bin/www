@@ -49,45 +49,42 @@ models.sequelize.sync({ force: true })
  */
 function createExampleQuestion() {
   models.Question
-    .find({ where: { title: 'Example Question' }})
-    .complete(function(err, question) {
-      if (!!err) {
-        console.log("Error while searching for existing example question: ", err);
-      } else if (!question) {
-        console.log("Found no existing example question.");
-        models.Question
-          .create({
-            title: 'Example Question',
-          })
-          .complete(function(err, question) {
-            if (!!err) {
-              console.log("Unable to create example question: ", err);
-            } else {
-              console.log("Created example question.");
-              createExampleAnswer(question);
-            }
-          });
-      }
+    .create({
+      title: 'Example Question',
+    })
+    .then(function(question) {
+      console.log('Created example question.');
+      return question;
+    })
+    .catch(function(err) {
+      console.log('Unable to create example question: ', err)
+    })
+    .then(function(question) {
+      return createExampleAnswer(question);
     });
 }
 
 function createExampleAnswer(question) {
-  models.Answer
+  return models.Answer
     .create({
       title: "An example answer"
     })
-    .complete(function(err, answer) {
-      if (!!err) {
-        console.log("Unable to create example answer: ", err);
-      } else {
-        question.addAnswer(answer).complete(function(err) {
-          if (!!err) {
-            console.log("Unable to save example answer to question: ", err);
-          } else {
-            console.log("Created example answer.");
-          }
-        });
-      }
+    .catch(function(err) {
+      console.log("Unable to create example answer: ", err);
+    })
+    .then(function(answer) {
+      console.log("Created example answer.");
+      return answer;
+    })
+    .then(function(answer) {
+      return question.addAnswer(answer);
+    })
+    .catch(function(err) {
+      console.log("Unable to save example answer to question: ", err);
+    })
+    .then(function(answer) {
+      console.log("Added example answer to question.");
+      return answer;
     });
 }
 
