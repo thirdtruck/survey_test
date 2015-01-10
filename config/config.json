@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "okdork",
+    "password": "okdorkpassword",
+    "database": "okdork_development",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "okdork",
+    "password": "okdorkpassword",
+    "database": "okdork_test",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "okdork",
+    "password": "okdorkpassword",
+    "database": "okdork_production",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}
