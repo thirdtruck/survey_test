@@ -9,11 +9,7 @@ var exampleAnswerTitle = 'Example Answer';
 
 describe('Question', function() {
   before(function(done) {
-    models.sequelize
-      .sync({ force: true })
-      .complete(function(err) {
-        done(err);
-      });
+    syncDatabase(done);
   });
 
   beforeEach(function(done) {
@@ -54,11 +50,7 @@ describe('Question', function() {
 
 describe('Answer', function() {
   before(function(done) {
-    models.sequelize
-      .sync({ force: true })
-      .complete(function(err) {
-        done(err);
-      });
+    syncDatabase(done);
   })
 
   beforeEach(function(done) {
@@ -110,6 +102,20 @@ describe('Answer', function() {
   });
 
 });
+
+describe('User', function() {
+  before(function(done) {
+    syncDatabase(done);
+  });
+});
+
+function syncDatabase(done) {
+  models.sequelize
+    .sync({ force: true })
+    .complete(function(err) {
+      done(err);
+    });
+}
 
 function createExampleQuestion(title) {
   return Question.create({ title: title });
