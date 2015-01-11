@@ -5,6 +5,8 @@ var Question = models.Question;
 var Answer = models.Answer;
 
 describe('Question', function() {
+  this.timeout(500);
+
   before(function(done) {
     models.sequelize
       .sync({ force: true })
@@ -21,31 +23,21 @@ describe('Question', function() {
       });
   });
 
-  describe('Create a Question', function() {
-    it('require a title', function(done) {
+  describe('creation', function() {
+    it('should require a title', function(done) {
       createExampleQuestion(null, function(err, question) {
-        if (err) {
-          done(); /* TODO: Check for a more specific error, if possible. */
-          return;
-        }
-
-        throw 'Question creation should have failed.';
+        assert.ok(err, 'Question creation should have failed');
+        done();
       });
     });
 
-    it('should create a question with the given title', function(done) {
-      createExampleQuestion('Example Question', function(err, question) {
-        if (err) {
-          throw err;
-        };
+    it('should work with all required fields', function(done) {
+      var exampleTitle = 'Example Question';
 
-        if (!question) {
-          throw 'No question returned.';
-        }
-
-        if (!question.title) {
-          throw 'Title missing from question.';
-        }
+      createExampleQuestion(exampleTitle, function(err, question) {
+        assert.equal(err, null, 'Error thrown while creation Question');
+        assert.ok(question, 'Question not created');
+        assert.equal(question.title, exampleTitle, 'Title incorrect or missing');
 
         done();
       })
@@ -55,6 +47,8 @@ describe('Question', function() {
 });
 
 describe('Answer', function() {
+  this.timeout(500);
+
   before(function(done) {
     models.sequelize
       .sync({ force: true })
@@ -71,19 +65,15 @@ describe('Answer', function() {
       });
   });
 
-  describe('Create an Answer', function() {
-    it('must be associated with a Question', function(done) {
+  describe('creation', function() {
+    it('requires that the Answer be associated with a Question', function(done) {
       Answer
         .create({
           title: 'Example Answer' /* Also required. Covered in another test. */
           /* Question association would go here. */
         })
         .complete(function(err, answer) {
-          if (err) {
-            done(); /* TODO: Check for a more specific error, if possible. */
-          } else {
-            throw 'Answers must be associated with a Question.';
-          }
+          assert.ok(err, 'Creation of an Answer not associated with a Question should have failed');
         });
     })
   });
