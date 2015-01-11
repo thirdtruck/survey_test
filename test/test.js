@@ -1,8 +1,11 @@
 var assert = require('assert');
+var async = require('async');
 var models = require('../models');
 
 var Question = models.Question;
 var Answer = models.Answer;
+var User = models.User;
+var Response = models.Response;
 
 var exampleQuestionTitle = 'Example Question';
 var exampleAnswerTitle = 'Example Answer';
@@ -13,11 +16,7 @@ describe('Question', function() {
   });
 
   beforeEach(function(done) {
-    models.Question
-      .destroy({ where: true })
-      .complete(function(err) {
-        done(err);
-      });
+    emptyDatabase(done);
   });
 
   describe('creation', function() {
@@ -107,6 +106,10 @@ describe('User', function() {
   before(function(done) {
     syncDatabase(done);
   });
+
+  beforeEach(function(done) {
+    emptyDatabase(done);
+  });
 });
 
 function syncDatabase(done) {
@@ -115,6 +118,18 @@ function syncDatabase(done) {
     .complete(function(err) {
       done(err);
     });
+}
+
+function emptyDatabase(done) {
+  async.waterfall([
+    function(callback) { Question.destroy({ where: true }).catch(callback).finally(callback); },
+    function(callback) { Answer.destroy({ where: true }).catch(callback).finally(callback); },
+    function(callback) { User.destroy({ where: true }).catch(callback).finally(callback); },
+    function(callback) { Response.destroy({ where: true }).catch(callback).finally(callback); },
+  ],
+  function(err, result) {
+    done(err);
+  });
 }
 
 function createExampleQuestion(title) {
