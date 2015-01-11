@@ -34,23 +34,21 @@ describe('Question', function() {
     });
 
     it('should create a question with the given title', function(done) {
-      Question
-        .create({ title: 'Example Question' })
-        .complete(function(err, question) {
-          if (err) {
-            throw err;
-          };
+      createExampleQuestion('Example Question', function(err, question) {
+        if (err) {
+          throw err;
+        };
 
-          if (!question) {
-            throw 'No question returned.';
-          }
+        if (!question) {
+          throw 'No question returned.';
+        }
 
-          if (!question.title) {
-            throw 'Title missing from question.';
-          }
+        if (!question.title) {
+          throw 'Title missing from question.';
+        }
 
-          done();
-        })
+        done();
+      })
     });
   });
         
