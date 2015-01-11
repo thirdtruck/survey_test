@@ -77,6 +77,7 @@ describe('Answer', function() {
         })
         .complete(function(err, answer) {
           assert.ok(err, 'Answer creation should have failed');
+          done();
         })
         .fail(function(err) {
           done(err)
