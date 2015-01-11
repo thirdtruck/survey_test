@@ -2,6 +2,7 @@ var assert = require('assert');
 var models = require('../models');
 
 var Question = models.Question;
+var Answer = models.Answer;
 
 describe('Question', function() {
   before(function(done) {
@@ -20,7 +21,7 @@ describe('Question', function() {
       });
   });
 
-  describe("Create a Question", function() {
+  describe('Create a Question', function() {
     it('should save without error', function(done) {
       Question
         .create({ title: 'Example Question' })
@@ -42,11 +43,11 @@ describe('Question', function() {
           };
 
           if (!question) {
-            throw new Exception('No question returned.');
+            throw 'No question returned.';
           }
 
           if (!question.title) {
-            throw new Exception('Title missing from question.');
+            throw 'Title missing from question.';
           }
 
           done();
@@ -55,3 +56,41 @@ describe('Question', function() {
   });
         
 });
+
+describe('Answer', function() {
+  before(function(done) {
+    models.sequelize
+      .sync({ force: true })
+      .complete(function(err) {
+        done(err);
+      });
+  })
+
+  beforeEach(function(done) {
+    models.Question
+      .destroy({ where: true })
+      .complete(function(err) {
+        done(err);
+      });
+  });
+
+  describe('Create an Answer', function() {
+    it('must be associated with a Question', function(done) {
+      Answer
+        .create({
+          title: 'Example Answer' /* Also required. Covered in another test. */
+          /* Question association would go here. */
+        })
+        .complete(function(err, answer) {
+          if (err) {
+            done(); /* TODO: Check for a more specific error, if possible. */
+          } else {
+            throw 'Answers must be associated with a Question.';
+          }
+        });
+    })
+  });
+
+});
+
+
