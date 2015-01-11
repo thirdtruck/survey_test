@@ -23,7 +23,7 @@ describe('Question', function() {
     it('should require a title', function(done) {
       createExampleQuestion(null)
       .complete(function(err, question) {
-        assert.ok(err, 'Question creation should have catched');
+        assert.ok(err, 'Question creation should have failed');
         done();
       })
       .catch(function(err) {
@@ -32,7 +32,7 @@ describe('Question', function() {
     });
 
     it('should work with all required fields', function(done) {
-      createExampleQuestion(exampleQuestionTitle)
+      createExampleQuestion()
       .complete(function(err, question) {
         assert.equal(err, null, 'Error thrown while creation Question');
         assert.ok(question, 'Question not created');
@@ -76,9 +76,9 @@ describe('Answer', function() {
     })
 
     it('should work with all required fields', function(done) {
-      createExampleQuestion(exampleQuestionTitle)
+      createExampleQuestion()
       .complete(function(err, question) {
-        assert.equal(err, null, 'Error while creating Question');
+        assert.equal(err, null, 'Error while creating Question: ' + err);
         return question;
       })
       .then(function(question) {
@@ -133,6 +133,12 @@ function emptyDatabase(done) {
 }
 
 function createExampleQuestion(title) {
+  if (arguments.length == 0) {
+    title = exampleQuestionTitle;
+  }
+
   return Question.create({ title: title });
 }
+
+
 
