@@ -70,14 +70,13 @@ describe('Answer', function() {
   });
 
   describe('creation', function() {
-    it('requires that the Answer be associated with a Question', function(done) {
+    it('should require a title', function(done) {
       Answer
         .create({
-          title: 'Example Answer' /* Also required. Covered in another test. */
+          title: null
         })
-        /* Question association would go here. */
         .complete(function(err, answer) {
-          assert.ok(err, 'Creation of an Answer not associated with a Question should have failed');
+          assert.ok(err, 'Answer creation should have failed');
         })
         .fail(function(err) {
           done(err)
