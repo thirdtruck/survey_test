@@ -140,5 +140,24 @@ function createExampleQuestion(title) {
   return Question.create({ title: title });
 }
 
+function createExampleAnswer(title, question) {
+  if (arguments.length < 2) {
+    title = exampleAnswerTitle;
+  }
 
+  if (arguments.length < 1) {
+    return createExampleQuestion().then(function(question) {
+      createCallback(question);
+    });
+  }
+
+  return createCallback(question);
+
+  function createCallback(question) {
+    Answer.create({
+      title: title,
+      question: question
+    });
+  };
+}
 
