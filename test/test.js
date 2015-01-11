@@ -28,20 +28,27 @@ describe('Question', function() {
 
   describe('creation', function() {
     it('should require a title', function(done) {
-      createExampleQuestion(null, function(err, question) {
+      createExampleQuestion(null)
+      .complete(function(err, question) {
         assert.ok(err, 'Question creation should have failed');
         done();
+      })
+      .fail(function(err) {
+        done(err);
       });
     });
 
     it('should work with all required fields', function(done) {
-      createExampleQuestion(exampleQuestionTitle, function(err, question) {
+      createExampleQuestion(exampleQuestionTitle)
+      .complete(function(err, question) {
         assert.equal(err, null, 'Error thrown while creation Question');
         assert.ok(question, 'Question not created');
         assert.equal(question.title, exampleQuestionTitle, 'Title incorrect or missing');
-
         done();
       })
+      .fail(function(err) {
+        done(err);
+      });
     });
   });
         
@@ -82,9 +89,12 @@ describe('Answer', function() {
     })
 
     it('should work with all required fields', function(done) {
-      createExampleQuestion(exampleQuestionTitle, function(err, question) {
+      createExampleQuestion(exampleQuestionTitle)
+      .complete(function(err, question) {
         assert.equal(err, null, 'Error while creating Question');
-        
+        return question;
+      })
+      .then(function(question) {
         Answer
           .create({
             title: exampleAnswerTitle,
@@ -105,11 +115,8 @@ describe('Answer', function() {
 
 });
 
-function createExampleQuestion(title, done) {
-  Question
-    .create({ title: title })
-    .complete(function(err, question) {
-      done(err, question);
-    });
+function createExampleQuestion(title) {
+  return Question
+           .create({ title: title });
  }
   
