@@ -112,7 +112,6 @@ describe('Answer', function() {
 });
 
 function createExampleQuestion(title) {
-  return Question
-           .create({ title: title });
- }
-  
+  return Question.create({ title: title });
+}
+
