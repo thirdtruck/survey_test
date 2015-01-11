@@ -4,11 +4,11 @@ var router = express.Router();
 router.get('/count', function(req, res) {
   var models = req.models;
 
-  models.User
+  models.Response
     .count()
     .complete(function(err, count) {
       if (!!err) {
-        console.log("Unable to fetch the total number of users: ", err);
+        console.log("Unable to fetch the total number of responses: ", err);
         res.json({ error: err });
       } else {
         res.json({ count: count });
@@ -19,14 +19,14 @@ router.get('/count', function(req, res) {
 router.get('/:id', function(req, res) {
   var models = req.models;
 
-  models.User
+  models.Response
     .find({ where: { id: req.params.id }})
-    .complete(function(err, user) {
+    .complete(function(err, response) {
       if (!!err) {
-        console.log("Unable to fetch a user: ", err);
+        console.log("Unable to fetch a response: ", err);
         res.json({ error: err });
       } else {
-        res.json({ user: user });
+        res.json({ response: response });
       }
     });
 });

@@ -21,8 +21,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 var models = require('./models');
+var usersRoutes = require('./routes/users');
 var questionsRoutes = require('./routes/questions');
 var answersRoutes = require('./routes/answers');
+var responsesRoutes = require('./routes/responses');
 
 /* Make the ORM accessible to our router. */
 app.use(function(req, res, next) {
@@ -30,8 +32,10 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use('/users', usersRoutes);
 app.use('/questions', questionsRoutes);
 app.use('/answers', answersRoutes);
+app.use('/responses', responsesRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
