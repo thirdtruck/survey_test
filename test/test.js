@@ -22,16 +22,15 @@ describe('Question', function() {
   });
 
   describe('Create a Question', function() {
-    it('should save without error', function(done) {
-      Question
-        .create({ title: 'Example Question' })
-        .complete(function(err, question) {
-          if (err) {
-            throw err;
-          };
+    it('require a title', function(done) {
+      createExampleQuestion(null, function(err, question) {
+        if (err) {
+          done(); /* TODO: Check for a more specific error, if possible. */
+          return;
+        }
 
-          done();
-        })
+        throw 'Question creation should have failed.';
+      });
     });
 
     it('should create a question with the given title', function(done) {
@@ -93,4 +92,11 @@ describe('Answer', function() {
 
 });
 
-
+function createExampleQuestion(exampleTitle, done) {
+  Question
+    .create({ title: exampleTitle })
+    .complete(function(err, question) {
+      done(err, question);
+    });
+ }
+  
