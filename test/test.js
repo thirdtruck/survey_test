@@ -76,25 +76,17 @@ describe('Answer', function() {
     })
 
     it('should work with all required fields', function(done) {
-      createExampleQuestion()
-      .complete(function(err, question) {
-        assert.equal(err, null, 'Error while creating Question: ' + err);
-        return question;
-      })
-      .then(function(question) {
-        Answer
-          .create({
-            title: exampleAnswerTitle,
-            Question: question
-          })
-          .complete(function(err, answer) {
-            assert.equal(err, null, 'Error while creating Answer');
-            assert.ok(answer, 'No Answer created');
-            done();
-          })
-          .catch(function(err) {
-            done(err);
-          });
+      async.waterfall([
+        function(callback) { createExampleQuestion().catch(callback).complete(callback); },
+        function(question, callback) { createExampleAnswer(question).catch(callback).complete(callback); },
+        function(answer, callback) {
+          assert.ok(answer, 'Answer missing');
+          callback();
+        }
+      ],
+      function(err, result) {
+        console.log(arguments);
+        done(err);
       });
     });
             
@@ -154,7 +146,7 @@ function createExampleAnswer(title, question) {
   return createCallback(question);
 
   function createCallback(question) {
-    Answer.create({
+    return Answer.create({
       title: title,
       question: question
     });
