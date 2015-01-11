@@ -4,6 +4,9 @@ var models = require('../models');
 var Question = models.Question;
 var Answer = models.Answer;
 
+var exampleQuestionTitle = 'Example Question';
+var exampleAnswerTitle = 'Example Answer';
+
 describe('Question', function() {
   this.timeout(500);
 
@@ -32,12 +35,10 @@ describe('Question', function() {
     });
 
     it('should work with all required fields', function(done) {
-      var exampleTitle = 'Example Question';
-
-      createExampleQuestion(exampleTitle, function(err, question) {
+      createExampleQuestion(exampleQuestionTitle, function(err, question) {
         assert.equal(err, null, 'Error thrown while creation Question');
         assert.ok(question, 'Question not created');
-        assert.equal(question.title, exampleTitle, 'Title incorrect or missing');
+        assert.equal(question.title, exampleQuestionTitle, 'Title incorrect or missing');
 
         done();
       })
@@ -70,19 +71,37 @@ describe('Answer', function() {
       Answer
         .create({
           title: 'Example Answer' /* Also required. Covered in another test. */
-          /* Question association would go here. */
         })
+        /* Question association would go here. */
         .complete(function(err, answer) {
           assert.ok(err, 'Creation of an Answer not associated with a Question should have failed');
         });
     })
+
+    it('should work with all required fields', function(done) {
+      createExampleQuestion(exampleQuestionTitle, function(err, question) {
+        assert.equal(err, null, 'Error while creating Question');
+        
+        Answer
+          .create({
+            title: exampleAnswerTitle,
+            Question: question
+          })
+          .complete(function(err, answer) {
+            assert.equal(err, null, 'Error while creating Answer');
+            assert.ok(answer, 'No Answer created');
+            done();
+          });
+      });
+    });
+            
   });
 
 });
 
-function createExampleQuestion(exampleTitle, done) {
+function createExampleQuestion(title, done) {
   Question
-    .create({ title: exampleTitle })
+    .create({ title: title })
     .complete(function(err, question) {
       done(err, question);
     });
