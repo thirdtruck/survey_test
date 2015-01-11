@@ -75,6 +75,9 @@ describe('Answer', function() {
         /* Question association would go here. */
         .complete(function(err, answer) {
           assert.ok(err, 'Creation of an Answer not associated with a Question should have failed');
+        })
+        .fail(function(err) {
+          done(err)
         });
     })
 
@@ -91,6 +94,9 @@ describe('Answer', function() {
             assert.equal(err, null, 'Error while creating Answer');
             assert.ok(answer, 'No Answer created');
             done();
+          })
+          .fail(function(err) {
+            done(err);
           });
       });
     });
