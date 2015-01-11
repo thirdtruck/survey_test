@@ -28,10 +28,10 @@ describe('Question', function() {
     it('should require a title', function(done) {
       createExampleQuestion(null)
       .complete(function(err, question) {
-        assert.ok(err, 'Question creation should have failed');
+        assert.ok(err, 'Question creation should have catched');
         done();
       })
-      .fail(function(err) {
+      .catch(function(err) {
         done(err);
       });
     });
@@ -44,7 +44,7 @@ describe('Question', function() {
         assert.equal(question.title, exampleQuestionTitle, 'Title incorrect or missing');
         done();
       })
-      .fail(function(err) {
+      .catch(function(err) {
         done(err);
       });
     });
@@ -76,10 +76,10 @@ describe('Answer', function() {
           title: null
         })
         .complete(function(err, answer) {
-          assert.ok(err, 'Answer creation should have failed');
+          assert.ok(err, 'Answer creation should have catched');
           done();
         })
-        .fail(function(err) {
+        .catch(function(err) {
           done(err)
         });
     })
@@ -101,7 +101,7 @@ describe('Answer', function() {
             assert.ok(answer, 'No Answer created');
             done();
           })
-          .fail(function(err) {
+          .catch(function(err) {
             done(err);
           });
       });
