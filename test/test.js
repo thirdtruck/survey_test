@@ -8,8 +8,6 @@ var exampleQuestionTitle = 'Example Question';
 var exampleAnswerTitle = 'Example Answer';
 
 describe('Question', function() {
-  this.timeout(500);
-
   before(function(done) {
     models.sequelize
       .sync({ force: true })
@@ -55,8 +53,6 @@ describe('Question', function() {
 });
 
 describe('Answer', function() {
-  this.timeout(500);
-
   before(function(done) {
     models.sequelize
       .sync({ force: true })
