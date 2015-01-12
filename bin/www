@@ -41,8 +41,25 @@ function setupServer() {
  */
 /* TODO: Replace with migration-based setup! */
 models.sequelize.sync({ force: true })
-  .then(createExampleQuestion)
-  .then(setupServer);
+  .then(createExampleData)
+  .then(setupServer)
+  .then(function() {
+    console.log("Server running on port " + port + " ...");
+  });
+
+function createExampleData() {
+  var questionData = [
+    { title: "Why don't we do it on the road?" },
+    { title: "Is there life on Mars?" },
+    { title: "Have you ever seen the rain?" }
+  ];
+
+  return models.Question
+    .bulkCreate(questionData)
+    .catch(function(err) {
+      console.log("Unable to prepopulate questions: ", err);
+    });
+}
 
 /**
  * Initialize sample questions.
