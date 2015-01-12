@@ -38,7 +38,7 @@ function createExampleQuestion(title) {
   return Question.create({ title: title });
 }
 
-function createExampleAnswer(title, question) {
+function createExampleAnswer(question, title) {
   if (arguments.length < 2) {
     title = exampleAnswerTitle;
   }
@@ -53,8 +53,11 @@ function createExampleAnswer(title, question) {
 
   function createCallback(question) {
     return Answer.create({
-      title: title,
-      question: question
+      title: title
+    })
+    .then(function(answer) {
+      answer.setQuestion(question);
+      return answer;
     });
   };
 }
