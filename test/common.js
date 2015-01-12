@@ -63,6 +63,12 @@ function createExampleUser() {
   return User.create();
 }
 
+function createExampleResponse(answer, user) {
+  return Response.create({
+    answer: answer,
+    user: user
+  });
+}
 
 var includeGlobally = {
   exampleQuestionTitle: exampleQuestionTitle,
@@ -71,7 +77,8 @@ var includeGlobally = {
   emptyDatabase: emptyDatabase,
   createExampleQuestion: createExampleQuestion,
   createExampleAnswer: createExampleAnswer,
-  createExampleUser: createExampleUser
+  createExampleUser: createExampleUser,
+  createExampleResponse: createExampleResponse
 };
 
 function importAllTestVariablesInto(namespace) {

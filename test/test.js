@@ -104,9 +104,51 @@ describe('User', function() {
   describe('creation', function() {
     it('should work with all required fields', function(done) {
       async.waterfall([
-          function(callback) { createExampleUser().catch(callback).complete(callback); },
-          function(user, callback) {
-            assert.ok(user, 'User missing');
+          function(callback) { createExampleQuestion().catch(callback).complete(callback); },
+          function(question, callback) { createExampleAnswer(question).catch(callback).complete(callback); },
+          /* TODO: Find a more natural way to pass along all the parts we're building. */
+          function(answer, callback) {
+            createExampleUser()
+              .catch(callback)
+              .complete(function(err, user) {
+                callback(err, answer, user);
+              });
+          },
+          function(answer, user, callback) {
+            createExampleResponse(answer, user)
+              .catch(callback)
+              .complete(function(err, response) {
+                callback(err, response);
+              });
+          },
+          function(response, callback) {
+            assert.ok(response, 'Response missing');
+            callback();
+          }
+        ],
+        function(err, result) {
+          done(err);
+        });
+    });
+  });
+            
+});
+
+describe('Response', function() {
+  before(function(done) {
+    syncDatabase(done);
+  });
+
+  beforeEach(function(done) {
+    emptyDatabase(done);
+  });
+
+  describe('creation', function() {
+    it('should work with all required fields', function(done) {
+      async.waterfall([
+          function(callback) { createExampleResponse().catch(callback).complete(callback); },
+          function(response, callback) {
+            assert.ok(response, 'Response missing');
             callback();
           }
         ],
