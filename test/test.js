@@ -7,9 +7,7 @@ var Answer = models.Answer;
 var User = models.User;
 var Response = models.Response;
 
-var importAllTestGlobals = require('./common').importAll;
-
-importAllTestGlobals(global);
+require('./common').importAllTestVariablesInto(global);
 
 describe('Question', function() {
   before(function(done) {

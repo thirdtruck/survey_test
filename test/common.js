@@ -68,11 +68,11 @@ var includeGlobally = {
   createExampleAnswer: createExampleAnswer
 };
 
-function importAll(global) {
+function importAllTestVariablesInto(namespace) {
   for (var key in includeGlobally) {
-    global[key] = includeGlobally[key];
+    namespace[key] = includeGlobally[key];
   }
 }
 
-module.exports = { importAll: importAll };
+module.exports = { importAllTestVariablesInto : importAllTestVariablesInto };
 
