@@ -59,13 +59,19 @@ function createExampleAnswer(title, question) {
   };
 }
 
+function createExampleUser() {
+  return User.create();
+}
+
+
 var includeGlobally = {
   exampleQuestionTitle: exampleQuestionTitle,
   exampleAnswerTitle: exampleAnswerTitle,
   syncDatabase: syncDatabase,
   emptyDatabase: emptyDatabase,
   createExampleQuestion: createExampleQuestion,
-  createExampleAnswer: createExampleAnswer
+  createExampleAnswer: createExampleAnswer,
+  createExampleUser: createExampleUser
 };
 
 function importAllTestVariablesInto(namespace) {

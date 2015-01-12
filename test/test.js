@@ -84,7 +84,6 @@ describe('Answer', function() {
         }
       ],
       function(err, result) {
-        console.log(arguments);
         done(err);
       });
     });
@@ -101,5 +100,20 @@ describe('User', function() {
   beforeEach(function(done) {
     emptyDatabase(done);
   });
-});
 
+  describe('creation', function() {
+    it('should work with all required fields', function(done) {
+      async.waterfall([
+          function(callback) { createExampleUser().catch(callback).complete(callback); },
+          function(user, callback) {
+            assert.ok(user, 'User missing');
+            callback();
+          }
+        ],
+        function(err, result) {
+          done(err);
+        });
+    });
+  });
+            
+});
