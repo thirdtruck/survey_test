@@ -67,10 +67,13 @@ function createExampleUser() {
 }
 
 function createExampleResponse(answer, user) {
-  return Response.create({
-    answer: answer,
-    user: user
-  });
+  return Response
+    .create()
+    .then(function(response) {
+      response.setAnswer(answer);
+      response.setUser(user);
+      return response;
+    });
 }
 
 var includeGlobally = {
