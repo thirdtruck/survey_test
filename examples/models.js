@@ -7,7 +7,8 @@ function createExamples(models, done) {
   async.waterfall([
       function(callback) { models.sequelize.sync({ force: true }).complete(callback); },
       function(m, callback) { createExampleQuestions(models, callback); },
-      function(questions, callback) { createExampleAnswers(models, callback); }
+      function(questions, callback) { createExampleAnswers(models, callback); },
+      function(answers, callback) { createExampleUsers(models, callback); }
     ],
     function(err, result) {
       if (!!err) {
@@ -24,9 +25,7 @@ function createExampleQuestions(models, callback) {
     { title: "Have you ever seen the rain?" }
   ];
 
-  models.Question.bulkCreate(questionData).complete(function(err, questions) {
-    callback(null, questions);
-  });
+  models.Question.bulkCreate(questionData).complete(callback);
 }
 
 function createExampleAnswers(models, callback) {
@@ -67,6 +66,15 @@ function createExampleAnswers(models, callback) {
     function(err, result) {
       callback(err);
     });
+}
+
+function createExampleUsers(models, callback) {
+  var userData = [
+    { login: 'alice' },
+    { login: 'betty' }
+  ];
+
+  models.User.bulkCreate(userData).complete(callback);
 }
 
 module.exports = {
