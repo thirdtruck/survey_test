@@ -20,7 +20,20 @@ router.get('/:id', function(req, res) {
   var models = req.models;
 
   models.User
-    .find({ where: { id: req.params.id }})
+    .find({
+      where: { id: req.params.id },
+      include: [
+        {
+          model: models.Response,
+          include: [
+            {
+              model: models.Answer,
+              include: [models.Question]
+            }
+          ]
+        }
+      ]
+    })
     .complete(function(err, user) {
       if (!!err) {
         console.log("Unable to fetch a user: ", err);
