@@ -8,7 +8,8 @@ function createExamples(models, done) {
       function(callback) { models.sequelize.sync({ force: true }).complete(callback); },
       function(m, callback) { createExampleQuestions(models, callback); },
       function(questions, callback) { createExampleAnswers(models, callback); },
-      function(answers, callback) { createExampleUsers(models, callback); }
+      function(callback) { createExampleUsers(models, callback); },
+      function(users, callback) { createExampleResponses(models, callback); }
     ],
     function(err, result) {
       if (!!err) {
@@ -75,6 +76,48 @@ function createExampleUsers(models, callback) {
   ];
 
   models.User.bulkCreate(userData).complete(callback);
+}
+
+function createExampleResponses(models, responsesCreated) {
+  var allResponseData = [
+    { userId: 1, answerId: 1 },
+    { userId: 2, answerId: 2 }
+  ];
+
+  var allCallbacks = [
+    /* TODO: Do we actually need to perform these calls to #findAll first?
+       How else can we make sure that the changes have already been made?
+    */
+    function(callback) { models.User.findAll().complete(callback); },
+    function(users, callback) {
+      models.Answer.findAll().complete(function(err, answers) {
+        callback(err, users, answers);
+      });
+    }
+  ];
+
+  for (var responseIndex in allResponseData) {
+    allCallbacks.push(buildResponseCreationCallback(responseIndex));
+  }
+
+  function buildResponseCreationCallback(responseIndex) {
+    var responseData = allResponseData[responseIndex];
+
+    return function(users, answers, callback) {
+      models.Response.create({
+        UserId: responseData.userId,
+        AnswerId: responseData.answerId
+      })
+      .then(function(response) {
+        callback(null, users, answers);
+      });
+    };
+  }
+
+  async.waterfall(allCallbacks,
+    function(err, result) {
+      responsesCreated(err);
+    });
 }
 
 module.exports = {
