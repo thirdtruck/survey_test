@@ -12,6 +12,8 @@ var async = require('async');
 
 var models = require('../models');
 
+var createExampleModels = require('../examples/models').createExamples;
+
 /**
  * Get port from environment and store in Express.
  */
@@ -26,7 +28,6 @@ app.set('port', port);
 var server;
 
 function setupServer(callback) {
-  
   server = http.createServer(app);
 
   /**
@@ -42,71 +43,15 @@ function setupServer(callback) {
   callback();
 }
 
-/**
- * Initialize ORM.
- */
-/* TODO: Replace with migration-based setup! */
 async.waterfall([
-    function (callback) { return models.sequelize.sync({ force: true }).complete(callback); },
-    createExampleQuestions,
-    createExampleAnswers,
+    function(callback) { createExampleModels(models, callback); },
     setupServer
   ],
   function(err, result) {
-    if (!!err) {
-      console.log('Error: ', err);
-    }
-  });
-
-function createExampleQuestions(context, callback) {
-  var questionData = [
-    { title: "Why don't we do it on the road?" },
-    { title: "Is there life on Mars?" },
-    { title: "Have you ever seen the rain?" }
-  ];
-
-  return models.Question.bulkCreate(questionData).complete(callback);
-}
-
-function createExampleAnswers(q, callback) {
-  var allAnswerData = [
-    { title: "Because it's cold outside!", questionIndex: 0 },
-    { title: "Because there's a chicken in the way.", questionIndex: 0 },
-    { title: "Yes", questionIndex: 1 },
-    { title: "No", questionIndex: 1 },
-    { title: "Yes, and it's beautiful.", questionIndex: 2 },
-    { title: "Yes, now where's my umbrella?", questionIndex: 2 }
-  ];
-
-  var allCallbacks = [
-    /* TODO: Do we actually need to perform this #findAll first?
-       How else can we make sure that the changes have already been made?
-    */
-    function(callback) { models.Question.findAll().complete(callback); },
-  ];
-
-  for (var answerIndex in allAnswerData) {
-    allCallbacks.push(buildAnswerCreationCallback(answerIndex));
-  }
-
-  function buildAnswerCreationCallback(answerIndex) {
-    var answerData = allAnswerData[answerIndex];
-    
-    return function(questions, callback) {
-      models.Answer.create({ title: answerData.title })
-        .then(function(answer) {
-          answer
-            .setQuestion(questions[answerData.questionIndex])
-            .then(function(answer) { callback(null, questions); })
-        });
-    };
-  }
-
-  async.waterfall(allCallbacks,
-    function(err, result) {
-      callback(err);
-    });
-}
+      if (!!err) {
+        console.log('Error: ', err);
+      }
+   });
 
 /**
  * Event listener for HTTP server "error" event.
