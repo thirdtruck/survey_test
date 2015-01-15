@@ -29,7 +29,7 @@ router.get('/:id', function(req, res) {
         console.log("Unable to fetch a question: ", err);
         res.json({ error: err });
       } else {
-        res.json({ question: question });
+        res.json(question);
       }
     });
 });

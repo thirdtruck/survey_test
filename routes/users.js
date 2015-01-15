@@ -39,7 +39,7 @@ router.get('/:id', function(req, res) {
         console.log("Unable to fetch a user: ", err);
         res.json({ error: err });
       } else {
-        res.json({ user: user });
+        res.json(user);
       }
     });
 });

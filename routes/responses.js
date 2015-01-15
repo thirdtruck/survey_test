@@ -26,7 +26,7 @@ router.get('/:id', function(req, res) {
         console.log("Unable to fetch a response: ", err);
         res.json({ error: err });
       } else {
-        res.json({ response: response });
+        res.json(response);
       }
     });
 });
