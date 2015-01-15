@@ -1,6 +1,20 @@
 (function() {
 'use strict';
 
+var Answer = Backbone.Model.extend({
+  
+  defaults: {
+    title: 'Title Missing'
+  }
+
+});
+
+var Answers = Backbone.Collection.extend({
+  
+  model: Answer
+
+});
+
 var Question = Backbone.Model.extend({
 
   defaults: {
@@ -8,7 +22,17 @@ var Question = Backbone.Model.extend({
     answers: []
   },
 
-  urlRoot: '/questions'
+  urlRoot: '/questions',
+
+  parse: function(data, options) {
+    var question = this;
+
+    question.answers = new Answers(data.Answers || [], {
+      question: question
+    });
+    
+    return Backbone.Model.prototype.parse.apply(this, arguments);
+  }
 
 });
 
@@ -35,14 +59,9 @@ var QuestionView = Backbone.View.extend({
   render: function() {
     var view = this;
 
-    console.log(view.$title.length);
     view.$title.text(view.model.get('title'));
 
-    var answers = view.model.get('Answers');
-
-    console.log(answers);
-
-    var answerTitles = _.pluck(answers, 'title');
+    var answerTitles = view.model.answers.pluck('title');
 
     view.$answers.html(answerTitles.join('<br/>'));
   }
