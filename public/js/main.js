@@ -24,12 +24,27 @@ var QuestionView = Backbone.View.extend({
 
   initialize: function() {
     var view = this;
+
+    view.$title = view.$el.find('.title');
+
+    view.$answers = view.$el.find('.answers');
+
     view.listenTo(view.model, "change", view.render);
   },
 
   render: function() {
     var view = this;
-    view.$el.text(this.model.get('title'));
+
+    console.log(view.$title.length);
+    view.$title.text(view.model.get('title'));
+
+    var answers = view.model.get('Answers');
+
+    console.log(answers);
+
+    var answerTitles = _.pluck(answers, 'title');
+
+    view.$answers.html(answerTitles.join('<br/>'));
   }
 
 });
