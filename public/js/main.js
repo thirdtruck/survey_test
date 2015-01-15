@@ -1,5 +1,4 @@
-(function() {
-'use strict';
+$(document).ready(function() {
 
 var Answer = Backbone.Model.extend({
   
@@ -12,6 +11,26 @@ var Answer = Backbone.Model.extend({
 var Answers = Backbone.Collection.extend({
   
   model: Answer
+
+});
+
+var AnswerView = Backbone.View.extend({
+
+  template: _.template($('#template-answer').text()),
+
+  initialize: function() {
+    var view = this;
+
+    view.listenTo(view.model, "change", view.render);
+  },
+
+  render: function() {
+    var view = this;
+
+    view.$el.html(view.template(view.model.attributes));
+
+    return this;
+  }
 
 });
 
@@ -63,9 +82,18 @@ var QuestionView = Backbone.View.extend({
 
     var answerTitles = view.model.answers.pluck('title');
 
-    view.$answers.html(answerTitles.join('<br/>'));
-  }
+    view.$answers.empty();
 
+    // TODO: Render the whole collection, instead of just one answer
+    var answerView = new AnswerView({
+      model: view.model.answers.first(),
+      el: view.$answers
+    });
+
+    answerView.render();
+
+    //view.$answers.html(answerTitles.join('<br/>'));
+  }
 });
 
 var LoadingView = Backbone.View.extend({
@@ -86,25 +114,21 @@ var LoadingView = Backbone.View.extend({
       view.$survey.show();
     });
   }
+});
+
+var question = new Question({ id: 1 });
+
+var questionView = new QuestionView({
+  model: question,
+  el: $('.question')
+});
+
+var loadingView = new LoadingView({
+  model: question,
+  el: document
+});
+
+question.fetch();
 
 });
 
-$(document).ready(function() {
-
-  var question = new Question({ id: 1 });
-
-  var questionView = new QuestionView({
-    model: question,
-    el: $('.question')
-  });
-
-  var loadingView = new LoadingView({
-    model: question,
-    el: document
-  });
-
-  question.fetch();
-
-});
-
-})();
