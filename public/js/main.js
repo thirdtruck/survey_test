@@ -10,7 +10,21 @@ var Answer = Backbone.Model.extend({
 
 var Answers = Backbone.Collection.extend({
   
-  model: Answer
+  model: Answer,
+
+  initialize: function() {
+    var answers = this;
+
+    answers.selected = null;
+
+    answers.on('answer_selected', answers.answerSelected, answers);
+  },
+
+  answerSelected: function(answer) {
+    var answers = this;
+
+    answers.selected = answer;
+  }
 
 });
 
@@ -28,6 +42,11 @@ var AnswerView = Backbone.View.extend({
     var view = this;
 
     view.$el.html(view.template(view.model.attributes));
+
+    view.$el.on('change', function() {
+      view.model.trigger('answer_selected', view.model);
+      return true;
+    });
 
     return this;
   }
@@ -146,7 +165,7 @@ var SubmitView = Backbone.View.extend({
     var view = this;
 
     view.$el.on('click', function() {
-      console.log('Clicked!');
+      return true;
     });
   }
 
