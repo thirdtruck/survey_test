@@ -140,6 +140,18 @@ var LoadingView = Backbone.View.extend({
   }
 });
 
+var SubmitView = Backbone.View.extend({
+
+  initialize: function() {
+    var view = this;
+
+    view.$el.on('click', function() {
+      console.log('Clicked!');
+    });
+  }
+
+});
+
 var question = new Question({ id: 1 });
 
 var questionView = new QuestionView({
@@ -150,6 +162,11 @@ var questionView = new QuestionView({
 var loadingView = new LoadingView({
   model: question,
   el: document
+});
+
+var submitView = new SubmitView({
+  model: question,
+  el: $('.submit')
 });
 
 question.fetch();
