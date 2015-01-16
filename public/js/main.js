@@ -50,13 +50,12 @@ var AnswersView = Backbone.View.extend({
       var $answer = $('<div class="answer" />');
 
       var answerView = new AnswerView({
-        model: answer,
-        el: $answer
+        model: answer
       });
 
       answerView.render();
 
-      view.$el.append($answer);
+      view.$el.append(answerView.el);
 
       return answerView;
     });
