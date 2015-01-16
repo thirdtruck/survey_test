@@ -34,6 +34,38 @@ var AnswerView = Backbone.View.extend({
 
 });
 
+var AnswersView = Backbone.View.extend({
+
+  initialize: function() {
+    var view = this;
+    view.model = view.model || new Answers([]);
+  },
+
+  render: function() {
+    var view = this;
+
+    view.$el.empty();
+
+    var answerViews = view.model.map(function(answer) {
+      var $answer = $('<div class="answer" />');
+
+      var answerView = new AnswerView({
+        model: answer,
+        el: $answer
+      });
+
+      answerView.render();
+
+      view.$el.append($answer);
+
+      return answerView;
+    });
+
+    return view;
+  }
+
+});
+
 var Question = Backbone.Model.extend({
 
   defaults: {
@@ -80,19 +112,12 @@ var QuestionView = Backbone.View.extend({
 
     view.$title.text(view.model.get('title'));
 
-    var answerTitles = view.model.answers.pluck('title');
-
-    view.$answers.empty();
-
-    // TODO: Render the whole collection, instead of just one answer
-    var answerView = new AnswerView({
-      model: view.model.answers.first(),
+    view.answersView = new AnswersView({
+      model: view.model.answers,
       el: view.$answers
     });
 
-    answerView.render();
-
-    //view.$answers.html(answerTitles.join('<br/>'));
+    view.answersView.render();
   }
 });
 
