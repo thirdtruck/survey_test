@@ -86,7 +86,12 @@
 
     <!-- Templates -->
     <script id="template-answer" type="text/template">
-      <div class="answer"><%= title %></div>
+      <div class="answer">
+        <label for="answer-<%= id %>">
+          <input type="radio" id="answer-<%= id %>" name="answer" value="<%= id %>"/> 
+          <%= title %>
+        </label>
+      </div>
     </script>
     <!-- /Templates -->
 </html>
