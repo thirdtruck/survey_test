@@ -159,13 +159,43 @@ var LoadingView = Backbone.View.extend({
   }
 });
 
+var Response = Backbone.Model.extend({
+  
+  urlRoot: '/responses'
+  
+});
+
 var SubmitView = Backbone.View.extend({
 
   initialize: function() {
     var view = this;
 
     view.$el.on('click', function() {
+      var selectedAnswer = view.model.answers.selected;
+
+      if (_.isNull(selectedAnswer)) {
+        alert('Please select an answer before submitting.');
+        return false;
+      }
+
+      view.submitResponse(selectedAnswer);
+
       return true;
+    });
+  },
+
+  submitResponse: function(answer) {
+    var response = new Response({
+      AnswerID: answer.get('id')
+    });
+
+    response.save({}, {
+      success: function() {
+        console.log("Submitted successfully!");
+      },
+      error: function() {
+        console.log("Error while submitting:", arguments);
+      }
     });
   }
 

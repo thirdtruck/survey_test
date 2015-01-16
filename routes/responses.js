@@ -16,6 +16,12 @@ router.get('/count', function(req, res) {
     });
 });
 
+router.post('/', function(req, res, next) {
+  var response = req.body; // Already converted to an object.
+  console.log(response);
+  //res.json('Success');
+});
+
 router.get('/:id', function(req, res) {
   var models = req.models;
 
