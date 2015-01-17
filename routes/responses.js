@@ -63,6 +63,9 @@ router.post('/', function(req, res, next) {
 
     function(responder, callback) {
       console.log('Received a new response.');
+      /* Send back the UserID so that the front end 
+       * can track the sessions of anonymous users.
+       */
       res.json({ UserID: responder.id });
       callback();
     }
