@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var async = require('async');
 var express = require('express');
 var router = express.Router();
 
@@ -22,46 +23,58 @@ router.post('/', function(req, res, next) {
   var response = models.Response.build(req.body);
   var answerID = req.body.AnswerID;
   var responderUserID = req.body.ResponderUserID;
-  console.log(answerID, req.body);
 
-  try {
-    models.Answer
-      .find({ where: { id: answerID }})
-      .catch(function(err) { res.status(500).json({ error: err }); })
-      .then(function(answer) {
-        var getResponderPromise;
-        
-        if (_.isUndefined(responderUserID)) {
-          console.log('Creating a new anonymous user.');
-          getResponderPromise = models.User.create({
-              anonymous: true
-            });
-        } else {
-          getResponderPromise = models.User.find({
-            where: { id: responderUserID }
+  async.waterfall([
+    function(callback) { 
+      models.Answer.find({ where: { id: answerID }})
+        .complete(callback);
+    },
+    
+    function(answer, callback) {
+      var getResponderPromise;
+      
+      if (_.isUndefined(responderUserID)) {
+        console.log('Creating a new anonymous user.');
+        getResponderPromise = models.User.create({
+            anonymous: true
           });
-        }
-
-        getResponderPromise
-          .catch(function(err) { res.status(500).json({ error: err }); })
-          .then(function(responder) {
-            console.log(answer, answer.get('id'));
-            response.setAnswer(answer)
-              .catch(function(err) { res.status(500).json({ error: err }); })
-              .then(function() {
-                response.setUser(responder)
-                  .catch(function(err) { res.status(500).json({ error: err }); })
-                  .then(function() {
-                    console.log('Received a new response.');
-                    res.json({ UserID: responder.id });
-                  });
-              });
-          })
-            
+      } else {
+        getResponderPromise = models.User.find({
+          where: { id: responderUserID }
+        });
+      }
+      
+      getResponderPromise.complete(function(err, responder) {
+        callback(err, answer, responder)
       });
-  } catch (err) {
-    res.json(err);
+    },
+
+    function(answer, responder, callback) {
+      response.setAnswer(answer).complete(function(err) {
+        callback(err, responder);
+      });
+    },
+
+    function(responder, callback) {
+      response.setUser(responder).complete(function(err) {
+        callback(err, responder);
+      });
+    },
+
+    function(responder, callback) {
+      console.log('Received a new response.');
+      res.json({ UserID: responder.id });
+      callback();
+    }
+  ],
+
+  function(err) {
+    if (!!err) {
+      res.status(500).json({ error: err }); 
+    }
   }
+
+  );
 
 });
 
