@@ -2,7 +2,6 @@ var _ = require('underscore');
 var async = require('async');
 var express = require('express');
 var router = express.Router();
-var nodeUUID = require('node-uuid');
 
 router.get('/count', function(req, res) {
   var models = req.models;
@@ -26,11 +25,6 @@ router.post('/', function(req, res, next) {
   var responderUserID = req.body.ResponderUserID;
   var session = req.session;
 
-  if (_.isUndefined(session.uuid)) {
-    /* We have a new anonymous user. */
-    session.uuid = nodeUUID.v4();
-  }
-
   async.waterfall([
     /* Confirming that the Answer exists before 
      * checking for the User, since we don't want 
@@ -47,23 +41,15 @@ router.post('/', function(req, res, next) {
        * #findOrCreate here, but we'll need 
        * the UUID for non-anonymous users, too.
        */
-      models.User.find({ where: { uuid: session.uuid } })
+      models.User.loggedInOrAnonymous({ where: { uuid: session.uuid } })
         .complete(function(err, user) {
+          session.uuid = user.uuid;
           callback(err, user, answer);
         });
     },
     
     function(existingUser, answer, callback) {
       if (_.isNull(existingUser)) {
-        console.log('Creating a new anonymous user with UUID: ' 
-                      + session.uuid + '.');
-        models.User.create({
-            anonymous: true,
-            uuid: session.uuid
-          })
-          .complete(function(err, newUser) {
-            callback(err, newUser, answer);
-          });
       } else {
         callback(null, existingUser, answer);
       }
