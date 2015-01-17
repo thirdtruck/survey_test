@@ -26,20 +26,26 @@ router.get('/random', function(req, res) {
   models.User.loggedInOrAnonymous({ where: { uuid: session.uuid } })
     .complete(function(err, user) {
       session.uuid = user.uuid;
+      
+      var notYetAnsweredQuestionIDsQuery = models.sequelize.query('SELECT id FROM Questions WHERE Questions.id NOT IN (SELECT Questions.id FROM Responses JOIN Answers ON Responses.AnswerId = Answers.id JOIN Questions ON Answers.QuestionId = Questions.Id WHERE Responses.UserId = :userId);', models.Question, {}, { userId: user.id })
+        .complete(function(err, questions) {
+          if (!!err) {
+            res.status(500).json({ error: err }); 
+            throw err;
+          }
 
-      models.Question.findAll({ attributes: ['id'] })
-        .catch(function(err) {
-          res.status(500).json({ error: err }); 
-        })
-        .then(function(questions) {
           if (questions.length === 0) {
             res.json({ /* Empty response. */ });
             return;
           }
-          
-          var questionID = _.sample(questions).id;
 
-          getQuestionByID(questionID, models, res);
+          var randomQuestionID = _(questions)
+                                    .chain()
+                                    .pluck('id')
+                                    .sample()
+                                    .value();
+                                    
+          getQuestionByID(randomQuestionID, models, res);
         });
     });
 
