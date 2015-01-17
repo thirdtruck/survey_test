@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var express = require('express');
 var router = express.Router();
 
@@ -17,9 +18,51 @@ router.get('/count', function(req, res) {
 });
 
 router.post('/', function(req, res, next) {
-  var response = req.body; // Already converted to an object.
-  console.log(response);
-  //res.json('Success');
+  var models = req.models;
+  var response = models.Response.build(req.body);
+  var answerID = req.body.AnswerID;
+  var responderUserID = req.body.ResponderUserID;
+  console.log(answerID, req.body);
+
+  try {
+    models.Answer
+      .find({ where: { id: answerID }})
+      .catch(function(err) { res.status(500).json({ error: err }); })
+      .then(function(answer) {
+        var getResponderPromise;
+        
+        if (_.isUndefined(responderUserID)) {
+          console.log('Creating a new anonymous user.');
+          getResponderPromise = models.User.create({
+              anonymous: true
+            });
+        } else {
+          getResponderPromise = models.User.find({
+            where: { id: responderUserID }
+          });
+        }
+
+        getResponderPromise
+          .catch(function(err) { res.status(500).json({ error: err }); })
+          .then(function(responder) {
+            console.log(answer, answer.get('id'));
+            response.setAnswer(answer)
+              .catch(function(err) { res.status(500).json({ error: err }); })
+              .then(function() {
+                response.setUser(responder)
+                  .catch(function(err) { res.status(500).json({ error: err }); })
+                  .then(function() {
+                    console.log('Received a new response.');
+                    res.json({ UserID: responder.id });
+                  });
+              });
+          })
+            
+      });
+  } catch (err) {
+    res.json(err);
+  }
+
 });
 
 router.get('/:id', function(req, res) {

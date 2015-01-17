@@ -190,8 +190,8 @@ var SubmitView = Backbone.View.extend({
     });
 
     response.save({}, {
-      success: function() {
-        console.log("Submitted successfully!");
+      success: function(response) {
+        console.log("Submitted successfully!", response);
       },
       error: function() {
         console.log("Error while submitting:", arguments);
