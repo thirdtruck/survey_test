@@ -35,7 +35,7 @@ router.get('/random', function(req, res) {
           }
 
           if (questions.length === 0) {
-            res.json({ /* Empty response. */ });
+            res.json({ noQuestionsLeft: true });
             return;
           }
 
