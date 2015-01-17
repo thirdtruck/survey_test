@@ -33,7 +33,7 @@ router.get('/random', function(req, res) {
         })
         .then(function(questions) {
           if (questions.length === 0) {
-            res.status(500).json({ error: 'No questions available.' });
+            res.json({ /* Empty response. */ });
             return;
           }
           
