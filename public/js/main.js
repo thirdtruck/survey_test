@@ -201,7 +201,7 @@ var SubmitView = Backbone.View.extend({
 
 });
 
-var question = new Question({ id: 1 });
+var question = new Question({ id: 'random' });
 
 var questionView = new QuestionView({
   model: question,
