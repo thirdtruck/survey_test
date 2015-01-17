@@ -19,6 +19,7 @@
     "mocha": "^2.1.0",
     "morgan": "~1.5.1",
     "mysql": "^2.5.4",
+    "node-uuid": "^1.4.2",
     "sequelize": "^2.0.0",
     "sequelize-cli": "^1.0.2",
     "sequelize-mysql": "^1.7.0",
