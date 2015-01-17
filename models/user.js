@@ -2,12 +2,15 @@
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
     login: DataTypes.STRING,
+    passwordHash: DataTypes.STRING,
     anonymous: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
     },
-    passwordHash: DataTypes.STRING
+    uuid: {
+      type: DataTypes.UUID
+    }
   }, {
     classMethods: {
       associate: function(models) {

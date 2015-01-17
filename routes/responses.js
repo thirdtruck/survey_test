@@ -2,6 +2,7 @@ var _ = require('underscore');
 var async = require('async');
 var express = require('express');
 var router = express.Router();
+var nodeUUID = require('node-uuid');
 
 router.get('/count', function(req, res) {
   var models = req.models;
@@ -23,33 +24,52 @@ router.post('/', function(req, res, next) {
   var response = models.Response.build(req.body);
   var answerID = req.body.AnswerID;
   var responderUserID = req.body.ResponderUserID;
+  var session = req.session;
+
+  if (_.isUndefined(session.uuid)) {
+    /* We have a new anonymous user. */
+    session.uuid = nodeUUID.v4();
+  }
 
   async.waterfall([
+    /* Confirming that the Answer exists before 
+     * checking for the User, since we don't want 
+     * to waste resources creating new anonymous 
+     * Users for every bad request.
+     */
     function(callback) { 
       models.Answer.find({ where: { id: answerID }})
         .complete(callback);
     },
-    
+
     function(answer, callback) {
-      var getResponderPromise;
-      
-      if (_.isUndefined(responderUserID)) {
-        console.log('Creating a new anonymous user.');
-        getResponderPromise = models.User.create({
-            anonymous: true
+      /* It might seem like we could use 
+       * #findOrCreate here, but we'll need 
+       * the UUID for non-anonymous users, too.
+       */
+      models.User.find({ where: { uuid: session.uuid } })
+        .complete(function(err, user) {
+          callback(err, user, answer);
+        });
+    },
+    
+    function(existingUser, answer, callback) {
+      if (_.isNull(existingUser)) {
+        console.log('Creating a new anonymous user with UUID: ' 
+                      + session.uuid + '.');
+        models.User.create({
+            anonymous: true,
+            uuid: session.uuid
+          })
+          .complete(function(err, newUser) {
+            callback(err, newUser, answer);
           });
       } else {
-        getResponderPromise = models.User.find({
-          where: { id: responderUserID }
-        });
+        callback(null, existingUser, answer);
       }
-      
-      getResponderPromise.complete(function(err, responder) {
-        callback(err, answer, responder)
-      });
     },
 
-    function(answer, responder, callback) {
+    function(responder, answer, callback) {
       response.setAnswer(answer).complete(function(err) {
         callback(err, responder);
       });
