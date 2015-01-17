@@ -23,7 +23,7 @@ router.post('/', function(req, res, next) {
   var response = models.Response.build(req.body);
   var answerID = req.body.AnswerID;
   var responderUserID = req.body.ResponderUserID;
-  var session = req.session;
+  var session = req.session || { };
 
   async.waterfall([
     /* Confirming that the Answer exists before 
