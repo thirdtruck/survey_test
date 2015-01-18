@@ -165,8 +165,7 @@ var SurveyView = Backbone.View.extend({
     });
 
     view.listenTo(view.model, 'sync', function() {
-      console.log(view.model.get('noQuestionsLeft'));
-      if (view.model.get('noQuestionsLeft') !== false) {
+      if (view.model.get('noQuestionsLeft') !== true) {
         view.$survey.show();
       }
     });
@@ -236,15 +235,21 @@ var SubmitView = Backbone.View.extend({
   },
 
   submitResponse: function(answer) {
+    var view = this;
+    
     var response = new Response({
       AnswerID: answer.get('id')
     });
 
     response.save({}, {
       success: function(response) {
-        console.log('Submitted successfully!', response);
+        alert('Thank you for answering!');
+        view.model.clear({ silent: true });
+        view.model.set({ id: 'random' });
+        view.model.fetch();
       },
       error: function() {
+        alert('Uable to save your response. Sorry!');
         console.log('Error while submitting:', arguments);
       }
     });
