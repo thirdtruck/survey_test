@@ -257,6 +257,22 @@ var SubmitView = Backbone.View.extend({
 
 });
 
+var LogoutView = Backbone.View.extend({
+
+  initialize: function() {
+    var view = this;
+
+    view.$el.on('click', function() {
+      console.log('click!')
+      $.post('/users/logout')
+        .always(function() {
+          window.location = '/';
+        });
+    });
+  }
+
+});
+
 var question = new Question({ id: 'random' });
 
 var questionView = new QuestionView({
@@ -282,6 +298,10 @@ var doneView = new DoneView({
 var submitView = new SubmitView({
   model: question,
   el: $('.submit')
+});
+
+var LogoutView = new LogoutView({
+  el: $('.logout') // TOOD: Add Logout button.
 });
 
 question.fetch();

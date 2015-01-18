@@ -16,6 +16,20 @@ router.get('/count', function(req, res) {
     });
 });
 
+router.post('/logout', function(req, res) {
+  var models = req.models;
+  var session = req.session;
+  var uuid = session && session.uuid;
+
+  session.destroy();
+
+  req.models.User.update({ uuid: null }, { where: { uuid: uuid } })
+    .finally(function() {
+      res.redirect('/');
+    });
+
+});
+
 router.get('/:id', function(req, res) {
   var models = req.models;
 
