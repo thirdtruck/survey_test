@@ -1,3 +1,7 @@
 .survey {
   display: none;
 }
+
+.done {
+  display: none;
+}

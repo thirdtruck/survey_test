@@ -35,7 +35,7 @@ var AnswerView = Backbone.View.extend({
   initialize: function() {
     var view = this;
 
-    view.listenTo(view.model, "change", view.render);
+    view.listenTo(view.model, 'change', view.render);
   },
 
   render: function() {
@@ -122,13 +122,27 @@ var QuestionView = Backbone.View.extend({
 
     view.$answers = view.$el.find('.answers');
 
-    view.listenTo(view.model, "change", view.render);
+    view.listenTo(view.model, 'change', view.render);
   },
 
   render: function() {
     var view = this;
 
-    view.$title.text(view.model.get('title'));
+    /* TODO: Find a more "natural" way of 
+     * indicating that there are no questions 
+     * left.
+     */
+    var titleText;
+
+    if (view.model.get('noQuestionsLeft')) {
+      view.model.trigger('noQuestionsLeft');
+
+      return;
+    }
+
+    titleText = view.model.get('title');
+
+    view.$title.text(titleText);
 
     view.answersView = new AnswersView({
       model: view.model.answers,
@@ -139,24 +153,61 @@ var QuestionView = Backbone.View.extend({
   }
 });
 
+var SurveyView = Backbone.View.extend({
+  
+  initialize: function() {
+    var view = this;
+
+    view.$survey = view.$el.find('.survey');
+
+    view.listenTo(view.model, 'request', function() {
+      view.$survey.hide();
+    });
+
+    view.listenTo(view.model, 'sync', function() {
+      console.log(view.model.get('noQuestionsLeft'));
+      if (view.model.get('noQuestionsLeft') !== false) {
+        view.$survey.show();
+      }
+    });
+
+    view.listenTo(view.model, 'noQuestionsLeft', function() {
+      view.$survey.hide();
+    });
+  }
+
+});
+
 var LoadingView = Backbone.View.extend({
 
   initialize: function() {
     var view = this;
 
     view.$loading = view.$el.find('.loading');
-    view.$survey = view.$el.find('.survey');
 
-    view.listenTo(view.model, "request", function() {
+    view.listenTo(view.model, 'request', function() {
       view.$loading.show();
-      view.$survey.hide();
     });
 
-    view.listenTo(view.model, "sync", function() {
+    view.listenTo(view.model, 'sync', function() {
       view.$loading.hide();
-      view.$survey.show();
     });
   }
+
+});
+
+var DoneView = Backbone.View.extend({
+
+  initialize: function() {
+    var view = this;
+
+    view.$done = view.$el.find('.done');
+
+    view.listenTo(view.model, 'noQuestionsLeft', function() {
+      view.$done.show();
+    });
+  }
+
 });
 
 var Response = Backbone.Model.extend({
@@ -191,10 +242,10 @@ var SubmitView = Backbone.View.extend({
 
     response.save({}, {
       success: function(response) {
-        console.log("Submitted successfully!", response);
+        console.log('Submitted successfully!', response);
       },
       error: function() {
-        console.log("Error while submitting:", arguments);
+        console.log('Error while submitting:', arguments);
       }
     });
   }
@@ -208,7 +259,17 @@ var questionView = new QuestionView({
   el: $('.question')
 });
 
+var surveyView = new SurveyView({
+  model: question,
+  el: document
+});
+
 var loadingView = new LoadingView({
+  model: question,
+  el: document
+});
+
+var doneView = new DoneView({
   model: question,
   el: document
 });
