@@ -9,7 +9,7 @@ var config    = require(__dirname + '/../config/config.json')[env];
 var sequelize;
 
 if (process.env.CLEARDB_DATABASE_URL) {
-  sequelize = requires('sequelize-heroku').connect();
+  sequelize = require('sequelize-heroku').connect();
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
