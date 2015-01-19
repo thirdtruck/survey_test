@@ -18,6 +18,7 @@
     "password": "okdorkpassword",
     "database": "okdork_production",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "use_env_variable": "CLEARDB_DATABASE_URL"
   }
 }
