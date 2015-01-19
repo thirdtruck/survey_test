@@ -3,6 +3,7 @@
   "version": "0.0.1-a",
   "description": "Code exercise from the awesome folks at OkDork!",
   "private": true,
+  "main": "./bin/www",
   "scripts": {
     "start": "node ./bin/www",
     "test": "mocha test/test.js"
@@ -28,6 +29,10 @@
     "sequelize-mysql": "^1.7.0",
     "serve-favicon": "~2.2.0",
     "underscore": "^1.7.0"
+  },
+  "engines": {
+    "node": "v0.10.35",
+    "npm" : "1.4.28"
   },
   "keywords": [
     "okdork"
