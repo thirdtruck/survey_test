@@ -1,4 +1,5 @@
 var express = require('express');
+var passport = require('passport');
 var router = express.Router();
 
 router.get('/count', function(req, res) {
@@ -28,6 +29,29 @@ router.post('/logout', function(req, res) {
       res.redirect('/');
     });
 
+});
+
+router.post('/login', function(req, res, next) {
+  var models = req.models;
+  var session = req.session;
+
+  console.log('Attempting login ...');
+
+  try {
+    passport.authenticate('local-login', function(err, user, info){
+      console.log('local-login', arguments);
+      
+      if (!!err) {
+        res.json({ error: err });
+        return next(err);
+      }
+      
+      res.json({ user: req.user });
+    })(req, res, next);
+  } catch (err) {
+    console.log("Error while logging in:", err);
+    res.json({ error: err });
+  }
 });
 
 router.get('/:id', function(req, res) {

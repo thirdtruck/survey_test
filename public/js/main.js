@@ -257,13 +257,49 @@ var SubmitView = Backbone.View.extend({
 
 });
 
+var LoginView = Backbone.View.extend({
+
+  initialize: function() {
+    var view = this;
+
+    console.log(view.$el);
+
+    view.$login = view.$el.find('.login');
+    view.$username = view.$el.find('.username');
+    view.$password = view.$el.find('.password');
+
+    view.$login.on('click', function(event) {
+      event.preventDefault();
+
+      var username = view.$username.val();
+      var password = view.$password.val();
+
+      console.log('Logging in with: ', username, password);
+      
+      $.post('/users/login', {
+        login: username,
+        password: password
+      })
+      .done(function(data) {
+          console.log('Login attempted', arguments);
+      })
+        .always(function() {
+          console.log('Login attempted', arguments);
+          //window.location = '/';
+        });
+    });
+  }
+
+});
+
 var LogoutView = Backbone.View.extend({
 
   initialize: function() {
     var view = this;
 
-    view.$el.on('click', function() {
-      console.log('click!')
+    view.$el.on('click', function(event) {
+      event.preventDefault();
+
       $.post('/users/logout')
         .always(function() {
           window.location = '/';
@@ -300,8 +336,12 @@ var submitView = new SubmitView({
   el: $('.submit')
 });
 
+var LoginView = new LoginView({
+  el: $('.login-form')
+});
+
 var LogoutView = new LogoutView({
-  el: $('.logout') // TOOD: Add Logout button.
+  el: $('.logout')
 });
 
 question.fetch();

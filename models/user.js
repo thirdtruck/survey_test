@@ -17,10 +17,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.UUID
     }
   }, {
+    timestamps: false,
     classMethods: {
       associate: function(models) {
         User.hasMany(models.Response);
       },
+      // TODO: Rename to getLoggedInOrAnonymous. Otherwise, this sounds like it should return a boolean.
       loggedInOrAnonymous: function(findParams) {
         /* Not checking for null .where because calls to 
          * this method that lack .where should break 
@@ -57,7 +59,13 @@ module.exports = function(sequelize, DataTypes) {
         });
       }
     },
-    timestamps: false
+    instanceMethods: {
+      validPassword: function(password) {
+        var user = this;
+        console.log('Validating password', password, 'for', user);
+        return user.get('passwordHash') === password;
+      }
+    }
   });
   return User;
 };
