@@ -26,13 +26,14 @@
     "passport-http": "^0.2.2",
     "sequelize": "^2.0.0",
     "sequelize-cli": "^1.0.2",
+    "sequelize-heroku": "^1.0.0",
     "sequelize-mysql": "^1.7.0",
     "serve-favicon": "~2.2.0",
     "underscore": "^1.7.0"
   },
   "engines": {
     "node": "v0.10.35",
-    "npm" : "1.4.28"
+    "npm": "1.4.28"
   },
   "keywords": [
     "okdork"
