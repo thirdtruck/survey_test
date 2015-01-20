@@ -242,15 +242,14 @@ var SubmitView = Backbone.View.extend({
     });
 
     response.save({}, {
-      success: function(response) {
+      done: function(response) {
         alert('Thank you for answering!');
         view.model.clear({ silent: true });
         view.model.set({ id: 'random' });
         view.model.fetch();
       },
-      error: function() {
+      fail: function() {
         alert('Uable to save your response. Sorry!');
-        console.log('Error while submitting:', arguments);
       }
     });
   }
@@ -262,26 +261,26 @@ var LoginView = Backbone.View.extend({
   initialize: function() {
     var view = this;
 
-    console.log(view.$el);
-
     view.$login = view.$el.find('.login');
     view.$username = view.$el.find('.username');
     view.$password = view.$el.find('.password');
 
+    /* TODO: More secure login. */
     view.$login.on('click', function(event) {
       event.preventDefault();
 
       var username = view.$username.val();
       var password = view.$password.val();
-
-      console.log('Logging in with: ', username, password);
       
       $.post('/users/login', {
         login: username,
         password: password
       })
       .done(function(data) {
-          console.log('Login attempted', arguments);
+        alert('Login successful!');
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        alert('Unable to log in: ' + errorThrown);
       });
     });
   }
