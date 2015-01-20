@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var nodeUUID = require('node-uuid');
 var Promise = require('bluebird').Promise;
+var bcrypt = require('bcrypt');
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
@@ -63,7 +64,7 @@ module.exports = function(sequelize, DataTypes) {
       validPassword: function(password) {
         var user = this;
         console.log('Validating password', password, 'for', user);
-        return user.get('passwordHash') === password;
+        return bcrypt.compareSync(password, user.get('passwordHash'));
       }
     }
   });

@@ -1,5 +1,6 @@
 
 var async = require('async');
+var bcrypt = require('bcrypt');
 
 function createExamples(models, done) {
 
@@ -71,9 +72,10 @@ function createExampleAnswers(models, callback) {
 }
 
 function createExampleUsers(models, callback) {
+  var salt = bcrypt.genSaltSync(10);
   var userData = [
-    { login: 'alice' },
-    { login: 'betty' }
+    { login: 'alice', passwordHash: bcrypt.hashSync("12345", salt) },
+    { login: 'betty', passwordHash: bcrypt.hashSync("qwerty", salt) }
   ];
 
   models.User.bulkCreate(userData).complete(callback);
