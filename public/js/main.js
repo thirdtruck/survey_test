@@ -282,11 +282,7 @@ var LoginView = Backbone.View.extend({
       })
       .done(function(data) {
           console.log('Login attempted', arguments);
-      })
-        .always(function() {
-          console.log('Login attempted', arguments);
-          //window.location = '/';
-        });
+      });
     });
   }
 

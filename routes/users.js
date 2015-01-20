@@ -1,6 +1,8 @@
+var _ = require('underscore');
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
+var nodeUUID = require('node-uuid');
 
 router.get('/count', function(req, res) {
   var models = req.models;
@@ -37,20 +39,36 @@ router.post('/login', function(req, res, next) {
 
   console.log('Attempting login ...');
 
+  session.uuid = session.uuid || nodeUUID.v4();
+
   try {
     passport.authenticate('local-login', function(err, user, info){
       console.log('local-login', arguments);
       
       if (!!err) {
-        res.json({ error: err });
-        return next(err);
+        throw err;
       }
-      
-      res.json({ user: req.user });
+
+      if (!user) {
+        res.status(401).json({ error: "Login failed." });
+        return;
+      }
+
+      user.uuid = session.uuid;
+      user
+        .save()
+        .complete(function(err) {
+          if (!!err) {
+            throw err;
+          }
+          
+          res.json({ user: _(user).pick('id', 'uuid') });
+        });
+
     })(req, res, next);
   } catch (err) {
     console.log("Error while logging in:", err);
-    res.json({ error: err });
+    res.status(500).json({ error: err });
   }
 });
 
