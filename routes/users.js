@@ -41,35 +41,30 @@ router.post('/login', function(req, res, next) {
 
   session.uuid = session.uuid || nodeUUID.v4();
 
-  try {
-    passport.authenticate('local-login', function(err, user, info){
-      console.log('local-login', arguments);
-      
-      if (!!err) {
-        throw err;
-      }
+  passport.authenticate('local-login', function(err, user, info){
+    console.log('local-login', arguments);
+    
+    if (!!err) {
+      throw err;
+    }
 
-      if (!user) {
-        res.status(401).json({ error: "Login failed." });
-        return;
-      }
+    if (!user) {
+      res.status(401).json({ error: "Login failed." });
+      return;
+    }
 
-      user.uuid = session.uuid;
-      user
-        .save()
-        .complete(function(err) {
-          if (!!err) {
-            throw err;
-          }
-          
-          res.json({ user: _(user).pick('id', 'uuid') });
-        });
+    user.uuid = session.uuid;
+    user
+      .save()
+      .complete(function(err) {
+        if (!!err) {
+          throw err;
+        }
+        
+        res.json({ user: _(user).pick('id', 'uuid') });
+      });
 
-    })(req, res, next);
-  } catch (err) {
-    console.log("Error while logging in:", err);
-    res.status(500).json({ error: err });
-  }
+  })(req, res, next);
 });
 
 router.get('/:id', function(req, res) {
