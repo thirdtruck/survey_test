@@ -6,7 +6,14 @@ var Sequelize = require("sequelize");
 var basename  = path.basename(module.filename);
 var env       = process.env.NODE_ENV || "development";
 var config    = require(__dirname + '/../config/config.json')[env];
-var sequelize = new Sequelize(config.database, config.username, config.password, config);
+var sequelize;
+
+if (process.env.CLEARDB_DATABASE_URL) {
+  sequelize = require('sequelize-heroku').connect();
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+
 var db        = {};
 
 fs
