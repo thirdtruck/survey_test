@@ -7,7 +7,7 @@ var bcrypt = require('bcrypt');
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
-    login: DataTypes.STRING,
+    login: DataTypes.STRING, // TODO: Enforce uniqueness on this.
     passwordHash: DataTypes.STRING,
     anonymous: {
       type: DataTypes.BOOLEAN,
@@ -63,7 +63,7 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
       validPassword: function(password) {
         var user = this;
-        console.log('Validating password', password, 'for', user);
+        console.log('Validating password', password, 'for user', user.id);
         return bcrypt.compareSync(password, user.get('passwordHash'));
       }
     }

@@ -42,8 +42,6 @@ router.post('/login', function(req, res, next) {
   session.uuid = session.uuid || nodeUUID.v4();
 
   passport.authenticate('local-login', function(err, user, info){
-    console.log('local-login', arguments);
-    
     if (!!err) {
       throw err;
     }
