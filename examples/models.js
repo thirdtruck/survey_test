@@ -8,8 +8,9 @@ function createExamples(models, done) {
       function(callback) { models.sequelize.sync({ force: true }).complete(callback); },
       function(m, callback) { createExampleQuestions(models, callback); },
       function(questions, callback) { createExampleAnswers(models, callback); },
-      function(callback) { createExampleUsers(models, callback); },
+      function(callback) { createExampleUsers(models, callback); }/*,
       function(users, callback) { createExampleResponses(models, callback); }
+      */
     ],
     function(err, result) {
       if (!!err) {
