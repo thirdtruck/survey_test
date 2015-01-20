@@ -123,4 +123,4 @@ function createExampleResponses(models, responsesCreated) {
 
 module.exports = {
   createExamples: createExamples
-}
+};

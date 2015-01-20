@@ -5,9 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 var models = require('./models');
+var setupPassportAuthentication = require('./lib/authentication').setupPassportAuthentication;
 
 var app = express();
 
@@ -29,38 +28,7 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// Set up authentication
-passport.use('local-login', new LocalStrategy({
-    usernameField: 'login',
-    passwordField: 'password',
-    passReqToCallback: true
-  },
-  function(req, login, password, done) {
-    console.log('Starting login check');
-    models.User.findOne({ where: { login: login } })
-      .complete(function(err, user) {
-        console.log('Comparing password');
-        if (!!err) {
-          console.log('Error', err);
-          return done(err);
-        }
-
-        if (!user) {
-          console.log('User not found');
-          return done(null, false);
-        }
-
-        if (!user.validPassword(password)) {
-          console.log('Invalid password');
-          return done(null, false);
-        }
-
-        console.log('Valid login!');
-        return (null, user);
-      });
-   })
-);
-
+var passport = setupPassportAuthentication(models);
 app.use(passport.initialize());
 
 var usersRoutes = require('./routes/users');
