@@ -72,6 +72,9 @@
           <div class="add-answers">
           </div>
         </div>
+        <div>
+          <a href="#" type="submit" class="btn btn-success btn-primary-btn-lg submit" role="button">Add Question</a> 
+        </div>
       </form>
     </div>
     
@@ -123,8 +126,9 @@
           <input type="text" id="answer-draft-<%= id %>" name="answer-draft-<%= id %>" value="" placeholder="(Answer Title)"/> 
         </label>
         <input type="button" class="remove-new-answer btn" value="-" data-answer-id="<%= id %>"/>
+        <input type="button" class="add-new-answer btn" value="+" />
       </div>
-      <input type="button" class="add-new-answer btn" value="+" />
+      
     </script>
     <!-- /Templates -->
 </html>
