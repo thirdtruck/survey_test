@@ -11,7 +11,7 @@ router.get('/count', function(req, res) {
     .count()
     .complete(function(err, count) {
       if (!!err) {
-        console.log("Unable to fetch the total number of users: ", err);
+        console.log('Unable to fetch the total number of users: ', err);
         res.json({ error: err });
       } else {
         res.json({ count: count });
@@ -47,7 +47,7 @@ router.post('/login', function(req, res, next) {
     }
 
     if (!user) {
-      res.status(401).json({ error: "Login failed." });
+      res.status(401).json({ error: 'Login failed.' });
       return;
     }
 
@@ -63,6 +63,30 @@ router.post('/login', function(req, res, next) {
       });
 
   })(req, res, next);
+});
+
+router.get('/current', function(req, res) {
+  var models = req.models;
+
+  var uuid = req.session.uuid;
+
+  if (!uuid) { /* New, anonymous user. */
+    res.json();
+    return;
+  }
+
+  models.User.find({
+    where: { uuid: uuid },
+    attributes: ['id', 'login', 'uuid', 'anonymous']
+  })
+  .complete(function(err, user) {
+    if (!!err) {
+      res.status(404).json({ error: 'Found no user with UUID: ' + uuid });
+      return;
+    }
+    
+    res.json(user);
+  });
 });
 
 router.get('/:id', function(req, res) {
@@ -85,7 +109,7 @@ router.get('/:id', function(req, res) {
     })
     .complete(function(err, user) {
       if (!!err) {
-        console.log("Unable to fetch a user: ", err);
+        console.log('Unable to fetch a user: ', err);
         res.json({ error: err });
       } else {
         res.json(user);
