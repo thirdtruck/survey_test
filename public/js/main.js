@@ -277,11 +277,21 @@ var LoginView = Backbone.View.extend({
         password: password
       })
       .done(function(data) {
+        view.model.set(data.user);
+        console.log(view.model);
         alert('Login successful!');
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
         alert('Unable to log in: ' + errorThrown);
       });
+    });
+
+    view.model.on('change', function() {
+      if (view.model.get('anonymous') === false) {
+        view.$el.hide();
+      } else {
+        view.$el.show();
+      }
     });
   }
 
@@ -300,10 +310,29 @@ var LogoutView = Backbone.View.extend({
           window.location = '/';
         });
     });
+
+    view.model.on('change', function() {
+      if (view.model.get('anonymous') === false) {
+        view.$el.show();
+      } else {
+        view.$el.hide();
+      }
+    });
   }
 
 });
 
+var User = Backbone.Model.extend({
+  
+  defaults: {
+    id: null,
+    uuid: null,
+    anonymous: undefined
+  }
+
+});
+
+var user = new User();
 var question = new Question({ id: 'random' });
 
 var questionView = new QuestionView({
@@ -332,12 +361,16 @@ var submitView = new SubmitView({
 });
 
 var LoginView = new LoginView({
+  model: user,
   el: $('.login-form')
 });
 
 var LogoutView = new LogoutView({
+  model: user,
   el: $('.logout')
 });
+
+user.set({ anonymous: true });
 
 question.fetch();
 

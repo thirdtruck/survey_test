@@ -59,7 +59,7 @@ router.post('/login', function(req, res, next) {
           throw err;
         }
         
-        res.json({ user: _(user).pick('id', 'uuid') });
+        res.json({ user: _(user).pick('id', 'uuid', 'anonymous') });
       });
 
   })(req, res, next);
