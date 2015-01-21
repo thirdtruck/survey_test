@@ -335,6 +335,52 @@ var AddQuestionView = Backbone.View.extend({
         view.$el.hide();
       }
     });
+
+    view.draftAnswers = [new Answer({id: 1})];
+
+    view.$addAnswers = view.$el.find('.add-answers');
+
+    view.render();
+  },
+
+  render: function() {
+    var view = this;
+
+    view.$addAnswers.empty();
+
+    view.addAnswerViews = [];
+
+    _(view.draftAnswers).each(function(answer) {
+      var addAnswerView = new AddAnswerView({
+        model: answer
+      });
+
+      view.addAnswerViews.push(addAnswerView);
+
+      addAnswerView.render();
+
+      view.$addAnswers.append(addAnswerView.el);
+    });
+    
+    return view;
+  }
+
+});
+
+var AddAnswerView = Backbone.View.extend({
+
+  template: _.template($('#template-add-answer').text()),
+
+  initialize: function() {
+    var view = this;
+  },
+
+  render: function() {
+    var view = this;
+
+    view.$el.html(view.template(view.model.attributes));
+
+    return view;
   }
 
 });

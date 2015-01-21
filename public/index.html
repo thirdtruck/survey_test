@@ -73,6 +73,11 @@
           <label>Question Title: </label>
           <input type="text" name="question-title" />
         </div>
+        <div>
+          <label>Answers: </label>
+          <div class="add-answers">
+          </div>
+        </div>
       </form>
     </div>
     
@@ -110,6 +115,16 @@
           <%= title %>
         </label>
       </div>
+    </script>
+
+    <script id="template-add-answer" type="text/template">
+      <div class="answer-draft">
+        <label for="answer-draft-<%= id %>">
+          <input type="text" id="answer-draft-<%= id %>" name="answer-draft-<%= id %>" value="" placeholder="(Answer Title)"/> 
+        </label>
+        <input type="button" class="remove-new-answer btn" value="-" data-answer-id="<%= id %>"/>
+      </div>
+      <input type="button" class="add-new-answer btn" value="+" />
     </script>
     <!-- /Templates -->
 </html>
