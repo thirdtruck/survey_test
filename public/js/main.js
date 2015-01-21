@@ -322,6 +322,10 @@ var LogoutView = Backbone.View.extend({
 
 });
 
+var AddQuestionView = Backbone.View.extend({
+
+});
+
 var User = Backbone.Model.extend({
   
   defaults: {
@@ -334,6 +338,7 @@ var User = Backbone.Model.extend({
 
 var user = new User();
 var question = new Question({ id: 'random' });
+var draftQuestion = new Question({ user: user });
 
 var questionView = new QuestionView({
   model: question,
@@ -360,14 +365,19 @@ var submitView = new SubmitView({
   el: $('.submit')
 });
 
-var LoginView = new LoginView({
+var loginView = new LoginView({
   model: user,
   el: $('.login-form')
 });
 
-var LogoutView = new LogoutView({
+var logoutView = new LogoutView({
   model: user,
   el: $('.logout')
+});
+
+var addQuestionView = new AddQuestionView({
+  model: draftQuestion,
+  el: $('.ask-question')
 });
 
 user.set({ anonymous: true });
