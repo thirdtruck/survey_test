@@ -242,13 +242,13 @@ var SubmitView = Backbone.View.extend({
     });
 
     response.save({}, {
-      done: function(response) {
+      success: function(response) {
         alert('Thank you for answering!');
         view.model.clear({ silent: true });
         view.model.set({ id: 'random' });
         view.model.fetch();
       },
-      fail: function() {
+      error: function() {
         alert('Uable to save your response. Sorry!');
       }
     });
