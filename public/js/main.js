@@ -349,53 +349,71 @@ var User = Backbone.Model.extend({
 
 });
 
-var user = new User();
-var question = new Question({ id: 'random' });
-var draftQuestion = new Question({ user: user });
+function initialize() {
 
-var questionView = new QuestionView({
-  model: question,
-  el: $('.question')
-});
+  var user = new User();
+  var question = new Question({ id: 'random' });
+  var draftQuestion = new Question({ user: user });
 
-var surveyView = new SurveyView({
-  model: question,
-  el: document
-});
+  var questionView = new QuestionView({
+    model: question,
+    el: $('.question')
+  });
 
-var loadingView = new LoadingView({
-  model: question,
-  el: document
-});
+  var surveyView = new SurveyView({
+    model: question,
+    el: document
+  });
 
-var doneView = new DoneView({
-  model: question,
-  el: document
-});
+  var loadingView = new LoadingView({
+    model: question,
+    el: document
+  });
 
-var submitView = new SubmitView({
-  model: question,
-  el: $('.submit')
-});
+  var doneView = new DoneView({
+    model: question,
+    el: document
+  });
 
-var loginView = new LoginView({
-  model: user,
-  el: $('.login-form')
-});
+  var submitView = new SubmitView({
+    model: question,
+    el: $('.submit')
+  });
 
-var logoutView = new LogoutView({
-  model: user,
-  el: $('.logout')
-});
+  var loginView = new LoginView({
+    model: user,
+    el: $('.login-form')
+  });
 
-var addQuestionView = new AddQuestionView({
-  model: draftQuestion,
-  el: $('.add-question')
-});
+  var logoutView = new LogoutView({
+    model: user,
+    el: $('.logout')
+  });
 
-user.set({ anonymous: true });
+  var addQuestionView = new AddQuestionView({
+    model: draftQuestion,
+    el: $('.add-question')
+  });
 
-question.fetch();
+  $.get('/users/current')
+    .done(function(data) {
+      if (data) {
+        user.set(data);
+      } else {
+        user.set({ anonymous: true });
+      }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      console.log('Error while fetching current user: ', errorThrown);
+      user.set({ anonymous: true });
+    })
+    .always(function() {
+      question.fetch();
+    });
+
+}
+
+initialize();
 
 });
 
