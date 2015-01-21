@@ -278,7 +278,6 @@ var LoginView = Backbone.View.extend({
       })
       .done(function(data) {
         view.model.set(data.user);
-        console.log(view.model);
         alert('Login successful!');
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
@@ -323,6 +322,20 @@ var LogoutView = Backbone.View.extend({
 });
 
 var AddQuestionView = Backbone.View.extend({
+
+  initialize: function() {
+    var view = this;
+
+    var adminUser = view.model.get('user');
+
+    adminUser.on('change', function() {
+      if (adminUser.get('anonymous') === false) {
+        view.$el.show();
+      } else {
+        view.$el.hide();
+      }
+    });
+  }
 
 });
 
@@ -377,7 +390,7 @@ var logoutView = new LogoutView({
 
 var addQuestionView = new AddQuestionView({
   model: draftQuestion,
-  el: $('.ask-question')
+  el: $('.add-question')
 });
 
 user.set({ anonymous: true });
