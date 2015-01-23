@@ -74,13 +74,13 @@ function getQuestionByID(id, models, res) {
 
 router.post('/', function(req, res) {
   var userData = req.body.user;
-  var answerData = req.body.answers;
+  var answersData = req.body.answers;
   var questionTitle = req.body.title;
   var models = req.models;
 
-  if (!userData || !answerData || !questionTitle
+  if (!userData || !answersData || !questionTitle
       || !userData.id || !userData.uuid) {
-    console.log(userData, answerData, questionTitle);
+    console.log(userData, answersData, questionTitle);
     console.log(req.body);
     res.status(400).json({ error: 'Missing parameters.' });
     return;
@@ -114,14 +114,12 @@ router.post('/', function(req, res) {
         });
     },
     function(user, callback) {
-      /* TODO: Check for Create vs. Update POST requests. 
-       * This is only intended to support the former for now.
-       */
-
-      models.Question
-        .create({ title: questionTitle, UserID: user.id })
+      var question = models.Question.build({ title: questionTitle, UserID: user.id });
+      question.setUser(user);
+      question.save()
         .complete(function(err, question) {
           if (!!err) {
+            console.log('Error while creating question:', err);
             callback(err);
             return;
           }
@@ -130,22 +128,41 @@ router.post('/', function(req, res) {
         });
     },
     function(user, question, callback) {
-      var completeAnswerData = _(answerData).map(function(answer) {
-                                  return _.extend(answer, { QuestionID: question.id });
-                                });
-      models.Answer
-        .bulkCreate(completeAnswerData)
-        .complete(function(err, answers) {
+      question.setUser(user)
+        .complete(function(err, updatedQuestion) {
           if (!!err) {
-            console.log('Error while saving answers:', err);
+            console.log('Error while assigning question to user:', err);
             callback(err);
             return;
           }
 
-          callback(null, user, question, answers);
-          /* TODO: Add set associations manually, or something. */
-          /* TODO: Figure out why the client isn't seeing a response. */
+          callback(null, user, updatedQuestion);
         });
+    },
+    function(user, question, callback) {
+      var completeanswersData = _(answersData).map(function(answer) {
+                                  return _.extend(answer, { QuestionID: question.id });
+                                });
+
+      function buildAnswer(answerData) {
+        var answer = models.Answer.build(answerData);
+        answer.setQuestion(question);
+        return answer;
+      }
+      
+      var answers = _(answersData).map(buildAnswer);
+
+      function saveAnswer(answer, onSaveCallback) {
+        answer
+          .save()
+          .complete(onSaveCallback);
+      }
+
+      /* TODO: Consider using QueryBuilder here. */
+      
+      async.each(answers, saveAnswer, function(err, savedAnswers) {
+        callback(err, user, question, savedAnswers);
+      });
     }
   ], function(err, result) {
     if (!!err) {

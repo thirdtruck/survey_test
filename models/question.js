@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Question.hasMany(models.Answer);
-        Question.belongsTo(models.User); /* TODO: Use #belongsTo on Answer and Response. */
+        Question.belongsTo(models.User);
       }
     },
     timestamps: false
