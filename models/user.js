@@ -22,6 +22,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         User.hasMany(models.Response);
+        User.hasMany(models.Question);
       },
       // TODO: Rename to getLoggedInOrAnonymous. Otherwise, this sounds like it should return a boolean.
       loggedInOrAnonymous: function(findParams) {

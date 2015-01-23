@@ -65,7 +65,7 @@
         <h1>Add a Question: </h1>
         <div>
           <label>Question Title: </label>
-          <input type="text" name="question-title" />
+          <input type="text" class="question-title" name="question-title" />
         </div>
         <div>
           <label>Answers: </label>
@@ -73,7 +73,7 @@
           </div>
         </div>
         <div>
-          <a href="#" type="submit" class="btn btn-success btn-primary-btn-lg submit" role="button">Add Question</a> 
+          <a href="#" type="submit" class="add-question-submit btn btn-success btn-primary-btn-lg submit" role="button">Add Question</a> 
         </div>
       </form>
     </div>
@@ -122,10 +122,10 @@
 
     <script id="template-add-answer" type="text/template">
       <div class="answer-draft">
-        <label for="answer-draft-<%= id %>">
-          <input type="text" id="answer-draft-<%= id %>" name="answer-draft-<%= id %>" value="" placeholder="(Answer Title)"/> 
+        <label for="answer-draft-<%= tempID %>">
+          <input type="text" class="title" id="title" name="title" value="" placeholder="(Answer Title)"/> 
         </label>
-        <input type="button" class="remove-new-answer btn" value="-" data-answer-id="<%= id %>"/>
+        <input type="button" class="remove-new-answer btn" value="-" data-answer-id="<%= tempID %>"/>
         <input type="button" class="add-new-answer btn" value="+" />
       </div>
       

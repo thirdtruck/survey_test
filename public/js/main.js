@@ -328,6 +328,18 @@ var AddQuestionView = Backbone.View.extend({
 
     var adminUser = view.model.get('user');
 
+    view.$addAnswers = view.$el.find('.add-answers');
+
+    view.$addQuestion = view.$el.find('.add-question-submit');
+
+    view.$questionTitle = view.$el.find('.question-title');
+
+    var answers = new Answers([{tempID: 1, title: ''}], {
+      question: view.model
+    });
+
+    view.model.set({ answers: answers });
+    
     adminUser.on('change', function() {
       if (adminUser.get('anonymous') === false) {
         view.$el.show();
@@ -336,9 +348,54 @@ var AddQuestionView = Backbone.View.extend({
       }
     });
 
-    view.draftAnswers = [new Answer({id: 1})];
+    view.$questionTitle.on('change', function() {
+      view.model.set({ title: view.$questionTitle.val() });
+    });
 
-    view.$addAnswers = view.$el.find('.add-answers');
+    view.$addQuestion.on('click', function() {
+      event.preventDefault();
+
+      var questionTitle = view.$questionTitle.val();
+
+      if (questionTitle === "" || _(question).isUndefined()) {
+        alert('Please supply a title for the question.');
+        return;
+      }
+
+      var answerTitles = answers
+                          .invoke('get', 'title')
+                          .filter(function(answerTitle) {
+                            return answerTitle && answerTitle.length > 0;
+                          });
+
+      if (_.isEmpty(answerTitles)) {
+        alert('Please supply at least one answer.');
+        return;
+      }
+
+      /* TODO: Figure out . */
+
+      view.model.save({}, {
+        success: function(question, serverResp, options) {
+          alert('New question saved.');
+          console.log(question);
+        },
+        error: function(question, serverResp, options) {
+          alert('Unable to save the new question.');
+          console.log(serverResp);
+        }
+      });
+
+      /*
+      $.post('/questions', view.model)
+        .done(function(data) {
+          console.log('Question submitted:', data);
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+          console.log('Error while submitting question:', errorThrown);
+        });
+      */
+    });
 
     view.render();
   },
@@ -350,7 +407,7 @@ var AddQuestionView = Backbone.View.extend({
 
     view.addAnswerViews = [];
 
-    _(view.draftAnswers).each(function(answer) {
+    view.model.get('answers').each(function(answer) {
       var addAnswerView = new AddAnswerView({
         model: answer
       });
@@ -373,6 +430,11 @@ var AddAnswerView = Backbone.View.extend({
 
   initialize: function() {
     var view = this;
+
+    view.$el.on('change', '.title', function() {
+      var $answerTitle = $(this);
+      view.model.set({ title: $answerTitle.val() });
+    });
   },
 
   render: function() {
@@ -423,7 +485,7 @@ function initialize() {
 
   var submitView = new SubmitView({
     model: question,
-    el: $('.submit')
+    el: $('.survey .submit')
   });
 
   var loginView = new LoginView({
