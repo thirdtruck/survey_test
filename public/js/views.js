@@ -320,19 +320,17 @@ var AddQuestionView = Backbone.View.extend({
         return;
       }
 
-      var answerTitles = answers
-                          .invoke('get', 'title')
-                          .filter(function(answerTitle) {
-                            return answerTitle && answerTitle.length > 0;
-                          });
+      var untitledAnswers = answers.filter(function(answer) {
+        var answerTitle = answer.get('title');
+        return ! answerTitle || answerTitle.length == 0;
+      });
 
-      if (_.isEmpty(answerTitles)) {
-        /* TODO: Also delete any title-less answers 
-         * before submitting.
-         */
+      if (_.isEmpty(answers.without(untitledAnswers))) {
         alert('Please supply at least one answer.');
         return;
       }
+
+      answers.remove(untitledAnswers);
 
       view.model.save({}, {
         success: function(question, serverResp, options) {
