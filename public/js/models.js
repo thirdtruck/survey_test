@@ -77,6 +77,10 @@ var Response = Backbone.Model.extend({
   
 });
 
+var ResponseReport = Backbone.Model.extend({
+
+});
+
 models = {
   User: User,
   Question: Question,
@@ -84,6 +88,7 @@ models = {
   Answer: Answer,
   Answers: Answers,
   Response: Response,
+  ResponseReport: ResponseReport,
 };
 
 })();

@@ -8,6 +8,7 @@ function initialize() {
   var user = new User({ id: 'current' });
   var question = new Question({ id: 'random' });
   var draftQuestion = new Question({ user: user });
+  var responseReport = new ResponseReport();
 
   var questionView = new QuestionView({
     model: question,
@@ -47,6 +48,11 @@ function initialize() {
   var addQuestionView = new AddQuestionView({
     model: draftQuestion,
     el: $('.add-question')
+  });
+
+  var responseReportView = new ResponseReportView({
+    model: responseReport,
+    el: $('.report')
   });
 
   user.fetch()

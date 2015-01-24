@@ -442,6 +442,27 @@ var AddAnswerView = Backbone.View.extend({
 
 });
 
+var ResponseReportView = Backbone.View.extend({
+
+  template: _.template($('#template-answer').text()),
+
+  initialize: function() {
+    var view = this;
+
+    view.listenTo(view.model, 'change', function() {
+      view.render();
+    });
+  },
+
+  render: function() {
+    var view = this;
+
+    view.$el.empty();
+
+    view.$el.html(view.template(view.model.attributes));
+  }
+});
+
 views = {
   QuestionView: QuestionView,
   AnswerView: AnswerView,
@@ -454,6 +475,7 @@ views = {
   LogoutView: LogoutView,
   AddQuestionView: AddQuestionView,
   AddAnswerView: AddAnswerView,
+  ResponseReportView: ResponseReportView,
 };
 
 })();
