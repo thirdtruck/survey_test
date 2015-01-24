@@ -22,6 +22,7 @@ function createExamples(models, done) {
 }
 
 function createExampleQuestions(models, callback) {
+  /* TODO: Assign these to the example users. */
   var questionData = [
     { title: "Why don't we do it on the road?" },
     { title: "Is there life on Mars?" },

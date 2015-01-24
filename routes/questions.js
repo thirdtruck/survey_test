@@ -88,6 +88,12 @@ router.post('/', function(req, res) {
 
   /* TODO: Should we bother checking the session UUID, too? */
 
+  /* We're going to chain a _lot_ of methods here, but only 
+   * because Sequelize doesn't yet support simultaneous 
+   * instance creation and association assignment. Even 
+   * #set[Association] calls #save automatically.
+   */
+
   async.waterfall([
     function(callback) {
       models.User
@@ -114,9 +120,8 @@ router.post('/', function(req, res) {
         });
     },
     function(user, callback) {
-      var question = models.Question.build({ title: questionTitle, UserID: user.id });
-      question.setUser(user);
-      question.save()
+      models.Question
+        .create({ title: questionTitle })
         .complete(function(err, question) {
           if (!!err) {
             console.log('Error while creating question:', err);
@@ -129,39 +134,45 @@ router.post('/', function(req, res) {
     },
     function(user, question, callback) {
       question.setUser(user)
-        .complete(function(err, updatedQuestion) {
+        .complete(function(err) {
           if (!!err) {
-            console.log('Error while assigning question to user:', err);
             callback(err);
             return;
           }
 
-          callback(null, user, updatedQuestion);
+          callback(null, user, question);
         });
     },
     function(user, question, callback) {
-      var completeanswersData = _(answersData).map(function(answer) {
-                                  return _.extend(answer, { QuestionID: question.id });
-                                });
-
-      function buildAnswer(answerData) {
-        var answer = models.Answer.build(answerData);
-        answer.setQuestion(question);
-        return answer;
-      }
+      function createAnswer(answerData, onCreateCallback) {
+        models.Answer
+          .create(answerData)
+          .complete(onCreateCallback)
+      };
       
-      var answers = _(answersData).map(buildAnswer);
+      async.map(answersData, createAnswer, function(err, answers) {
+        if (!!err) {
+          callback(err);
+          return;
+        }
 
-      function saveAnswer(answer, onSaveCallback) {
+        callback(null, user, question, answers);
+      });
+    },
+    function(user, question, answers, callback) {
+      function assignQuestion(answer, onAssignCallback) {
         answer
-          .save()
-          .complete(onSaveCallback);
-      }
-
-      /* TODO: Consider using QueryBuilder here. */
+          .setQuestion(question)
+          .complete(onAssignCallback)
+      };
       
-      async.each(answers, saveAnswer, function(err, savedAnswers) {
-        callback(err, user, question, savedAnswers);
+      async.each(answers, assignQuestion, function(err, answers) {
+        if (!!err) {
+          callback(err);
+          return;
+        }
+
+        callback(null, user, question, answers);
       });
     }
   ], function(err, result) {
