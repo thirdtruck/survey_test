@@ -334,11 +334,30 @@ var AddQuestionView = Backbone.View.extend({
 
     view.$questionTitle = view.$el.find('.question-title');
 
-    var answers = new Answers([{tempID: 1, title: ''}], {
-      question: view.model
-    });
+    var answers = new Answers([], { question: view.model });
 
     view.model.set({ answers: answers });
+
+    view.listenTo(answers, 'add', function(answer) {
+      view.addNewAnswerView(answer);
+    });
+
+    view.listenTo(answers, 'remove', function(answer) {
+      view.removeNewAnswerView(answer);
+    });
+
+    view.listenTo(answers, 'add_new_answer', function(answer) {
+      view.addNewAnswer();
+    });
+    
+    view.listenTo(answers, 'remove_new_answer', function(answer, answerView) {
+      /* Always leave at least one AddAnswerView. */
+      if (answers.length <= 1) {
+        return;
+      }
+
+      answers.remove(answer);
+    });
     
     adminUser.on('change', function() {
       if (adminUser.get('anonymous') === false) {
@@ -373,31 +392,19 @@ var AddQuestionView = Backbone.View.extend({
         return;
       }
 
-      /* TODO: Figure out . */
-
       view.model.save({}, {
         success: function(question, serverResp, options) {
           alert('New question saved.');
-          console.log(question);
         },
         error: function(question, serverResp, options) {
           alert('Unable to save the new question.');
-          console.log(serverResp);
         }
       });
-
-      /*
-      $.post('/questions', view.model)
-        .done(function(data) {
-          console.log('Question submitted:', data);
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-          console.log('Error while submitting question:', errorThrown);
-        });
-      */
     });
 
     view.render();
+
+    view.addNewAnswer();
   },
 
   render: function() {
@@ -408,19 +415,44 @@ var AddQuestionView = Backbone.View.extend({
     view.addAnswerViews = [];
 
     view.model.get('answers').each(function(answer) {
-      var addAnswerView = new AddAnswerView({
-        model: answer
-      });
-
-      view.addAnswerViews.push(addAnswerView);
-
-      addAnswerView.render();
-
-      view.$addAnswers.append(addAnswerView.el);
+      view.addNewAnswerView(answer);
     });
     
     return view;
-  }
+  },
+
+  addNewAnswer: function() {
+    var view = this;
+    var answers = view.model.get('answers');
+    
+    answers.add({ tempID: 1, title: '' });
+  },
+
+  addNewAnswerView: function(answer) {
+    var view = this;
+
+    var addAnswerView = new AddAnswerView({
+      model: answer
+    });
+
+    view.addAnswerViews.push(addAnswerView);
+
+    addAnswerView.render();
+
+    view.$addAnswers.append(addAnswerView.el);
+  },
+
+  removeNewAnswerView: function(answer) {
+    var view = this;
+
+    var viewsToRemove = _(view.addAnswerViews).where({ model: answer });
+
+    _(viewsToRemove).each(function(viewToRemove) {
+      viewToRemove.$el.remove();
+    });
+
+    view.addAnswerViews = _(view.addAnswerViews).without(viewsToRemove);
+  },
 
 });
 
@@ -434,6 +466,14 @@ var AddAnswerView = Backbone.View.extend({
     view.$el.on('change', '.title', function() {
       var $answerTitle = $(this);
       view.model.set({ title: $answerTitle.val() });
+    });
+
+    view.$el.on('click', '.add-new-answer', function() {
+      view.model.trigger('add_new_answer', view.model);
+    });
+
+    view.$el.on('click', '.remove-new-answer', function() {
+      view.model.trigger('remove_new_answer', view.model, view);
     });
   },
 
