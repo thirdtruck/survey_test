@@ -395,6 +395,7 @@ var AddQuestionView = Backbone.View.extend({
       view.model.save({}, {
         success: function(question, serverResp, options) {
           alert('New question saved.');
+          view.resetQuestion();
         },
         error: function(question, serverResp, options) {
           alert('Unable to save the new question.');
@@ -419,6 +420,20 @@ var AddQuestionView = Backbone.View.extend({
     });
     
     return view;
+  },
+
+  resetQuestion: function() {
+    var view = this;
+
+    view.model.get('answers').reset()
+
+    view.model.unset('id');
+
+    view.$questionTitle.val(''); /* This will trigger a value change. */
+
+    view.render();
+
+    view.addNewAnswer();
   },
 
   addNewAnswer: function() {
@@ -543,6 +558,7 @@ function initialize() {
     el: $('.add-question')
   });
 
+  /* TODO: Refactor this to use #fetch. */
   $.get('/users/current')
     .done(function(data) {
       if (data) {
