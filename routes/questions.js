@@ -95,86 +95,11 @@ router.post('/', function(req, res) {
    */
 
   async.waterfall([
-    function(callback) {
-      models.User
-        .find({
-          where: {
-            id: userData.id,
-            uuid: userData.uuid,
-            anonymous: false
-          }
-        })
-        .complete(function(err, user) {
-          if (!!err) {
-            callback(err);
-            return;
-          }
-
-          if (!user) {
-            res.status(401).json({ error: 'Missing or invalid login session.' });
-            callback(null);
-            return;
-          }
-
-          callback(null, user);
-        });
-    },
-    function(user, callback) {
-      models.Question
-        .create({ title: questionTitle })
-        .complete(function(err, question) {
-          if (!!err) {
-            console.log('Error while creating question:', err);
-            callback(err);
-            return;
-          }
-
-          callback(null, user, question);
-        });
-    },
-    function(user, question, callback) {
-      question.setUser(user)
-        .complete(function(err) {
-          if (!!err) {
-            callback(err);
-            return;
-          }
-
-          callback(null, user, question);
-        });
-    },
-    function(user, question, callback) {
-      function createAnswer(answerData, onCreateCallback) {
-        models.Answer
-          .create(answerData)
-          .complete(onCreateCallback)
-      };
-      
-      async.map(answersData, createAnswer, function(err, answers) {
-        if (!!err) {
-          callback(err);
-          return;
-        }
-
-        callback(null, user, question, answers);
-      });
-    },
-    function(user, question, answers, callback) {
-      function assignQuestion(answer, onAssignCallback) {
-        answer
-          .setQuestion(question)
-          .complete(onAssignCallback)
-      };
-      
-      async.each(answers, assignQuestion, function(err, answers) {
-        if (!!err) {
-          callback(err);
-          return;
-        }
-
-        callback(null, user, question, answers);
-      });
-    }
+    findUser,
+    createQuestion,
+    assignUser,
+    createAnswers,
+    assignQuestion,
   ], function(err, result) {
     if (!!err) {
       console.log('Error while submitting a new question:', err);
@@ -184,6 +109,92 @@ router.post('/', function(req, res) {
 
     res.json({ message: 'New question submitted successfully.' });
   });
+
+  function findUser(callback) {
+    models.User
+      .find({
+        where: {
+          id: userData.id,
+          uuid: userData.uuid,
+          anonymous: false
+        }
+      })
+      .complete(function(err, user) {
+        if (!!err) {
+          callback(err);
+          return;
+        }
+
+        if (!user) {
+          res.status(401).json({ error: 'Missing or invalid login session.' });
+          callback(null);
+          return;
+        }
+
+        callback(null, user);
+      });
+  }
+
+  function createQuestion(user, callback) {
+    models.Question
+      .create({ title: questionTitle })
+      .complete(function(err, question) {
+        if (!!err) {
+          console.log('Error while creating question:', err);
+          callback(err);
+          return;
+        }
+
+        callback(null, user, question);
+      });
+  }
+
+  function assignUser(user, question, callback) {
+    question.setUser(user)
+      .complete(function(err) {
+        if (!!err) {
+          callback(err);
+          return;
+        }
+
+        callback(null, user, question);
+      });
+  }
+
+  function createAnswers(user, question, callback) {
+    function createAnswer(answerData, onCreateCallback) {
+      models.Answer
+        .create(answerData)
+        .complete(onCreateCallback)
+    };
+    
+    async.map(answersData, createAnswer, function(err, answers) {
+      if (!!err) {
+        callback(err);
+        return;
+      }
+
+      callback(null, user, question, answers);
+    });
+  }
+
+  function assignQuestion(user, question, answers, callback) {
+    function assignQuestion(answer, onAssignCallback) {
+      answer
+        .setQuestion(question)
+        .complete(onAssignCallback)
+    };
+    
+    async.each(answers, assignQuestion, function(err, answers) {
+      if (!!err) {
+        callback(err);
+        return;
+      }
+
+      callback(null, user, question, answers);
+    });
+  }
+
 });
 
 module.exports = router;
