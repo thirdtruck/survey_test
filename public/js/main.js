@@ -5,7 +5,7 @@ _.extend(window, views);
 
 function initialize() {
 
-  var user = new User();
+  var user = new User({ id: 'current' });
   var question = new Question({ id: 'random' });
   var draftQuestion = new Question({ user: user });
 
@@ -49,17 +49,11 @@ function initialize() {
     el: $('.add-question')
   });
 
-  /* TODO: Refactor this to use #fetch. */
-  $.get('/users/current')
+  user.fetch()
     .done(function(data) {
-      if (data) {
-        user.set(data);
-      } else {
-        user.set({ anonymous: true });
-      }
+      /* Nothing more to do. */
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
-      console.log('Error while fetching current user: ', errorThrown);
       user.set({ anonymous: true });
     })
     .always(function() {

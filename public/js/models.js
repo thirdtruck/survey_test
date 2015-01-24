@@ -3,6 +3,8 @@ var models;
 (function() {
 
 var User = Backbone.Model.extend({
+
+  urlRoot: '/users',
   
   defaults: {
     id: null,

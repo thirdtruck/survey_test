@@ -327,6 +327,9 @@ var AddQuestionView = Backbone.View.extend({
                           });
 
       if (_.isEmpty(answerTitles)) {
+        /* TODO: Also delete any title-less answers 
+         * before submitting.
+         */
         alert('Please supply at least one answer.');
         return;
       }
