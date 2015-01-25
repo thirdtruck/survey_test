@@ -79,6 +79,9 @@
     </div>
 
     <div class="report jumbotron">
+      <div class="container">
+        <div class="questions"></div>
+      </div>
     </div>
     
     <div class="done jumbotron">
@@ -124,23 +127,31 @@
     </script>
 
     <script id="template-response-report" type="text/template">
-      <div class="container">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <div class="panel-title">
-              <span class="question-id">17</span>: 
-              <span class="question-title">Example Question</span>
-            </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="panel-title">
+            <span class="question-id">Question #<%= id %></span>: 
+            <span class="question-title"><%= title %></span>
           </div>
-          <table class="answers table">
+        </div>
+        <table class="answers table">
+          <tbody>
             <tr class="headers">
               <th>Answer ID</th>
               <th>Title</th>
               <th>Responses</th>
             </tr>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
+    </script>
+
+    <script id="template-response-report-answer" type="text/template">
+      <tr class="answer">
+        <td class="col-md-1"><%= id %></td>
+        <td class=""><%= title %></td>
+        <td class="col-md-1"><%= responseCount %></td>
+      </tr>
     </script>
     <!-- /Templates -->
 

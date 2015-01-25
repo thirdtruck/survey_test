@@ -442,14 +442,23 @@ var AddAnswerView = Backbone.View.extend({
 
 });
 
-var ResponseReportView = Backbone.View.extend({
+var QuestionReportView = Backbone.View.extend({
 
-  template: _.template($('#template-answer').text()),
+  /* If this was a dynamic report, I would 
+   * create an AnswerReportView. It's static, 
+   * however, so I'm rendering everything in 
+   * a single pass.
+   */
+  template: _.template($('#template-response-report').text()),
+
+  answerTemplate: _.template($('#template-response-report-answer').text()),
 
   initialize: function() {
     var view = this;
 
-    view.listenTo(view.model, 'change', function() {
+    view.$questions = view.$el.find('.questions');
+
+    view.listenTo(view.model, 'sync', function() {
       view.render();
     });
   },
@@ -457,9 +466,25 @@ var ResponseReportView = Backbone.View.extend({
   render: function() {
     var view = this;
 
-    view.$el.empty();
+    var $questions = view.$questions;
 
-    view.$el.html(view.template(view.model.attributes));
+    $questions.empty();
+
+    _(view.model.get('questions')).each(function(question) {
+      var $question = $(view.template(question));
+
+      var $answersBody = $question.find('.answers tbody');
+
+      _(question.answers).each(function(answer) {
+        var answerHTML = view.answerTemplate(answer);
+        $answersBody.append(answerHTML);
+      });
+      
+      $questions.append($question);
+    });
+
+
+    view.$el.show();
   }
 });
 
@@ -475,7 +500,7 @@ views = {
   LogoutView: LogoutView,
   AddQuestionView: AddQuestionView,
   AddAnswerView: AddAnswerView,
-  ResponseReportView: ResponseReportView,
+  QuestionReportView: QuestionReportView,
 };
 
 })();

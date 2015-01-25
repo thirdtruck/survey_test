@@ -77,7 +77,14 @@ var Response = Backbone.Model.extend({
   
 });
 
-var ResponseReport = Backbone.Model.extend({
+var QuestionReport = Backbone.Model.extend({
+
+  urlRoot: '/questions/report',
+
+  defaults: {
+    id: null,
+    model: []
+  },
 
 });
 
@@ -88,7 +95,7 @@ models = {
   Answer: Answer,
   Answers: Answers,
   Response: Response,
-  ResponseReport: ResponseReport,
+  QuestionReport: QuestionReport,
 };
 
 })();
