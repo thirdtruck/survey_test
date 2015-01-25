@@ -1,8 +1,9 @@
 
 var async = require('async');
 var bcrypt = require('bcrypt');
+var models = require('../models');
 
-function createExamples(models, done) {
+function createExamples() {
 
   /* TODO: Replace with migration-based setup! */
   async.waterfall([
@@ -17,8 +18,9 @@ function createExamples(models, done) {
     function(err, result) {
       if (!!err) {
         console.log('Error: ', err);
+        return;
       }
-      done(err);
+      console.log('Created examples successfully.');
     });
 }
 
@@ -151,6 +153,4 @@ function createExampleResponses(models, responsesCreated) {
     });
 }
 
-module.exports = {
-  createExamples: createExamples
-};
+createExamples();
