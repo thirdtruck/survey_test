@@ -457,9 +457,14 @@ var QuestionReportView = Backbone.View.extend({
     var view = this;
 
     view.$questions = view.$el.find('.questions');
+    view.$refresh = view.$el.find('.refresh');
 
     view.listenTo(view.model, 'sync', function() {
       view.render();
+    });
+
+    view.$refresh.on('click', function() {
+      view.model.fetch();
     });
   },
 
