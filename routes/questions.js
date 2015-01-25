@@ -55,7 +55,7 @@ router.get('/random', function(req, res) {
 router.get('/report', function(req, res) {
   var models = req.models;
 
-  console.log('Getting report ...');
+  /* TODO: Authorization check goes here. */
 
   models.Question
     .findAll()
