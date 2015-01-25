@@ -7,10 +7,11 @@ function createExamples(models, done) {
   /* TODO: Replace with migration-based setup! */
   async.waterfall([
       function(callback) { models.sequelize.sync({ force: true }).complete(callback); },
-      function(m, callback) { createExampleQuestions(models, callback); },
-      function(questions, callback) { createExampleAnswers(models, callback); },
-      function(callback) { createExampleUsers(models, callback); }/*,
-      function(users, callback) { createExampleResponses(models, callback); }
+      function(m, callback) { createExampleUsers(models, callback); },
+      function(users, callback) { createExampleQuestions(models, users, callback); },
+      function(questions, users, callback) { createExampleAnswers(models, callback); },
+      /*
+      function(users, callback) { createExampleResponses(models, callback); },
       */
     ],
     function(err, result) {
@@ -21,15 +22,33 @@ function createExamples(models, done) {
     });
 }
 
-function createExampleQuestions(models, callback) {
+function createExampleQuestions(models, users, callback) {
   /* TODO: Assign these to the example users. */
-  var questionData = [
-    { title: "Why don't we do it on the road?" },
-    { title: "Is there life on Mars?" },
-    { title: "Have you ever seen the rain?" }
+  var questionsData = [
+    { title: "Why don't we do it on the road?", userIndex: 0 },
+    { title: "Is there life on Mars?", userIndex: 0 },
+    { title: "Have you ever seen the rain?", userIndex: 1 }
   ];
 
-  models.Question.bulkCreate(questionData).complete(callback);
+  async.map(questionsData, function(questionData, mapCallback) {
+    models.Question
+      .create(questionData)
+      .complete(function(err, question) {
+        if (!!err) {
+          callback(err);
+          return;
+        }
+
+        var user = users[questionData.userIndex];
+
+        question
+          .setUser(user)
+          .complete(mapCallback);
+      });
+  }, function(err, questions) {
+    callback(err, questions, users);
+  });
+
 }
 
 function createExampleAnswers(models, callback) {
@@ -74,12 +93,20 @@ function createExampleAnswers(models, callback) {
 
 function createExampleUsers(models, callback) {
   var salt = bcrypt.genSaltSync(10);
-  var userData = [
+  var usersData = [
     { login: 'alice', passwordHash: bcrypt.hashSync("12345", salt) },
     { login: 'betty', passwordHash: bcrypt.hashSync("qwerty", salt) }
   ];
 
-  models.User.bulkCreate(userData).complete(callback);
+  async.map(usersData, function(userData, mapCallback) {
+      models.User
+        .create(userData)
+        .complete(mapCallback);
+    },
+    function(err, users) {
+      callback(err, users);
+    }
+  );
 }
 
 function createExampleResponses(models, responsesCreated) {
