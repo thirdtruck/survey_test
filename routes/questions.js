@@ -52,6 +52,58 @@ router.get('/random', function(req, res) {
 
 });
 
+router.get('/report', function(req, res) {
+  var models = req.models;
+
+  console.log('Getting report ...');
+
+  models.Question
+    .findAll()
+    .complete(function(err, questions) {
+      if (!!err) {
+        console.log('Unable to fetch questions: ', err);
+        res.status(500).json({ error: err });
+        return;
+      }
+
+      var numberOfResponsesQueryString = 
+        'SELECT Answers.id AS id, ' + 
+        'Answers.title AS title, ' + 
+        'COUNT(Responses.AnswerID) AS responseCount, ' + 
+        'Answers.QuestionID AS QuestionID ' + 
+        'FROM Answers ' + 
+        'LEFT JOIN Responses on Responses.AnswerID = Answers.id ' + 
+        'GROUP BY Answers.id;';
+
+      var data;
+      models.sequelize.query(numberOfResponsesQueryString)
+        .complete(function(err, answers) {
+          console.log('Answer Count', answers.length);
+          if (!!err) {
+            console.log('Unable to fetch report: ', err);
+            res.status(500).json({ error: err });
+            return;
+          }
+
+          _(answers).each(function(answer) {
+            var question = _(questions).findWhere({ id: answer.QuestionID });
+            question.answers = questions.answers || [];
+            question.answers.push(answer);
+          });
+
+          var rawData = _(questions).map(function(question) {
+            var rawQuestion = question.get();
+            var associatedAnswers = _(answers).where({ QuestionID: rawQuestion.id });
+            rawQuestion.answers = associatedAnswers;
+            return rawQuestion;
+          });
+          
+          res.json({ questions: rawData });
+        });
+    });
+
+});
+
 router.get('/:id', function(req, res) {
   getQuestionByID(req.params.id, req.models, res);
 });
