@@ -1,0 +1,55 @@
+<h1 id="intro">Intro</h1>
+<p>Welcome to the Example Survey Web App!</p>
+<h1 id="requirements">Requirements</h1>
+<p>(See <em>package.js</em> for the specific versions required.)</p>
+<ol style="list-style-type: decimal">
+<li><em>node.js</em> and <em>npm</em>.</li>
+<li>A SQL database (tested with MySQL).</li>
+</ol>
+<h1 id="installation---local">Installation - Local</h1>
+<ol style="list-style-type: decimal">
+<li>Retrieve the <a href="https://github.com/thirdtruck/survey_test">latest version</a> from GitHub.
+<ul>
+<li><strong>$ git clone https://github.com/thirdtruck/survey_test.git survey_test</strong></li>
+<li><strong>$ cd survey_test</strong></li>
+</ul></li>
+<li>Run <strong>$ npm install</strong>.</li>
+<li>Create a new database (e.g. &quot;survey&quot;) and a new user with full access to that database.</li>
+<li>Update <em>./config/config.json</em> to point to the database and user created in the previous step.</li>
+<li>Start the server, with the option to create example data enabled:
+<ul>
+<li><strong>$ CLOBBERWITHEXAMPLES=true node ./bin/www</strong></li>
+</ul></li>
+<li>Open the app in your browser: http://localhost:3000
+<ul>
+<li>Example login:
+<ul>
+<li>user: <em>alice</em></li>
+<li>password: <em>12345</em></li>
+</ul></li>
+</ul></li>
+<li>Enjoy!</li>
+</ol>
+<h1 id="installation---heroku">Installation - Heroku</h1>
+<ol style="list-style-type: decimal">
+<li>Fork the <a href="https://github.com/thirdtruck/survey_test">latest version</a> from GitHub.</li>
+<li>Create a new Heroku instance and link it to that fork.</li>
+<li>Enable ClearDB support on the instance. You will need the <strong>CLEARDB_DATABASE_URL</strong> that will be generated.</li>
+<li>In the forked repo, update <em>./config/config.json</em> with the database information from the previous step. (This can be done in GitHub's web-based editor.)</li>
+<li>Update the <em>Config Variables</em> of the Heroku instance.
+<ul>
+<li>The <strong>CLEARDB_DATABASE_URL</strong> from the earlier step,</li>
+<li>and <strong>CLOBBERWITHEXAMPLES=true</strong></li>
+</ul></li>
+<li>Deploy the app manually from the <em>heroku</em> branch.</li>
+<li>After the deploy concludes, remove the <strong>CLOBBERWITHEXAMPLES</strong> config variable from the Heroku instance.</li>
+<li>Visit the site at its specific URL.
+<ul>
+<li>Example login:
+<ul>
+<li>user: <em>alice</em></li>
+<li>password: <em>12345</em></li>
+</ul></li>
+</ul></li>
+<li>Enjoy!</li>
+</ol>
