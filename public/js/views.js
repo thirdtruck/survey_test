@@ -453,8 +453,10 @@ var QuestionReportView = Backbone.View.extend({
 
   answerTemplate: _.template($('#template-response-report-answer').text()),
 
-  initialize: function() {
+  initialize: function(options) {
     var view = this;
+
+    view.user = options.user;
 
     view.$questions = view.$el.find('.questions');
     view.$refresh = view.$el.find('.refresh');
@@ -466,6 +468,16 @@ var QuestionReportView = Backbone.View.extend({
     view.$refresh.on('click', function() {
       view.model.fetch();
     });
+
+    view.user.on('change', function() {
+      if (view.user.get('anonymous') === false) {
+        view.model.fetch(); /* TODO: Fix timing on this. */
+        view.$el.show();
+      } else {
+        view.$el.hide();
+      }
+    });
+
   },
 
   render: function() {
@@ -487,9 +499,6 @@ var QuestionReportView = Backbone.View.extend({
       
       $questions.append($question);
     });
-
-
-    view.$el.show();
   }
 });
 

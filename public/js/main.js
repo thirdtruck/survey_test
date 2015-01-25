@@ -52,6 +52,7 @@ function initialize() {
 
   var questionReportView = new QuestionReportView({
     model: questionReport,
+    user: user,
     el: $('.report')
   });
 
@@ -65,9 +66,6 @@ function initialize() {
     .always(function() {
       question.fetch();
     });
-
-  questionReport.fetch();
-
 }
 
 initialize();
