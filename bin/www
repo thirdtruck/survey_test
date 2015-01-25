@@ -12,6 +12,8 @@ var async = require('async');
 
 var models = require('../models');
 
+var createExampleModels = require('../examples/models').createExamples;
+
 /**
  * Get port from environment and store in Express.
  */
@@ -42,7 +44,7 @@ function setupServer(callback) {
 }
 
 async.waterfall([
-    //function(callback) { createExampleModels(models, callback); },
+    function(callback) { createExampleModels(models, callback); },
     setupServer
   ],
   function(err, result) {

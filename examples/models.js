@@ -1,9 +1,12 @@
 
 var async = require('async');
 var bcrypt = require('bcrypt');
-var models = require('../models');
 
-function createExamples() {
+function createExamples(models, done) {
+
+  if (models === undefined) {
+    models = require('../models');
+  }
 
   /* TODO: Replace with migration-based setup! */
   async.waterfall([
@@ -15,11 +18,17 @@ function createExamples() {
       function(users, callback) { createExampleResponses(models, callback); },
       */
     ],
-    function(err, result) {
+    function(err, results) {
+      if (done !== undefined) {
+        done(err)
+        return;
+      }
+
       if (!!err) {
         console.log('Error: ', err);
         return;
       }
+      
       console.log('Created examples successfully.');
     });
 }
@@ -153,4 +162,10 @@ function createExampleResponses(models, responsesCreated) {
     });
 }
 
-createExamples();
+if (module.parent === null) {
+  createExamples();
+} else {
+  module.exports = {
+    createExamples: createExamples
+  }
+}
