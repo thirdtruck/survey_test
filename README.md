@@ -12,7 +12,7 @@ Welcome to the Example Survey Web App!
 # Installation - Local
 
 1. Retrieve the [latest version ](https://github.com/thirdtruck/survey_test) from GitHub.
-    - **$ git clone https://github.com/thirdtruck/survey\_test.git survey\_test**
+    - **$ git clone https://github.com/thirdtruck/survey_test.git survey\_test**
     - **$ cd survey\_test**
 2. Run **$ npm install**.
 3. Create a new database (e.g. "survey") and a new user with full access to that database.
